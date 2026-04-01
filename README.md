@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Zudoku App
 
 This Zudoku app that was created with [`create-zudoku`](https://zudoku.dev/docs).
@@ -26,3 +27,7 @@ To learn more about Zudoku, you can visit the [Zudoku documentation](https://zud
 To connect with the community join the
 [GitHub Discussions](https://github.com/zuplo/zudoku/discussions) or
 [Discord](https://discord.zudoku.dev).
+=======
+# duitku-documentation-zudoku
+test deploy
+>>>>>>> 47ff7d35d6902ed9c6c8e83b3d80ddcffe0ddb61
