@@ -2,7 +2,6 @@ import type { ZudokuConfig } from "zudoku";
 import { customCss } from "./src/custom";
 
 const config: ZudokuConfig = {
-  // PENTING: Ini yang bikin GitHub Pages tahu jalan pulangnya
   basePath: "/duitku-documentation-zudoku",
   
   search: {
@@ -10,10 +9,12 @@ const config: ZudokuConfig = {
     maxSubResults: 3, 
   },
   
-  // 1. Logo dikembalikan ke tempat asalnya (Fix Error 1)
   site: {
     logo: {
-      src: { light: "/logos/logo duitku transparent.png", dark: "/logos/logo duitku transparent.png" },
+      src: { 
+        light: "logos/logo duitku transparent.png", 
+        dark: "logos/logo duitku transparent.png" 
+      },
       alt: "Zudoku",
       width: "70px",
     },
@@ -67,58 +68,57 @@ const config: ZudokuConfig = {
     customCss: customCss, 
   },
 
-  // Menggunakan navigasi aslimu yang sudah terbukti jalan
   navigation: [
     {
       type: "category",
       label: "Getting Started",
       icon: "sparkles",
       items: [
-        "/introduction",
+        "introduction", // HAPUS / di depan
         {
           type: "category",
           label: "Transfer Online",
-          link: { type: "doc", file: "/transferonline" },
+          link: { type: "doc", file: "transferonline" }, // HAPUS /
           items: [
             {
               type: "link",
               label: "Transfer Online Transaction Flow",
-              to: "/transferonline#online-transfer-transaction-flow", 
+              to: "transferonline#online-transfer-transaction-flow", // HAPUS /
             },
             {
               type: "link",
               label: "Transfer Online Inquiry Request",
-              to: "/transferonline#transfer-online-inquiry-request",
+              to: "transferonline#transfer-online-inquiry-request", // HAPUS /
             },
             {
               type: "link",
               label: "Transfer Online Transfer Request",
-              to: "/transferonline#transfer-online-transfer-request",
+              to: "transferonline#transfer-online-transfer-request", // HAPUS /
             },
           ],
         },
-        "/checkstatus",
-        "/checkbalance",
-        "/callback",
+        "checkstatus", // HAPUS /
+        "checkbalance", // HAPUS /
+        "callback", // HAPUS /
         {
           type: "category",
           label: "Response Code",
-          link: { type: "doc", file: "/responsecode" },
+          link: { type: "doc", file: "responsecode" }, // HAPUS /
           items:[
             {
               type: "link",
               label: "Callback Status Code",
-              to: "/responsecode#callback-status-code", 
+              to: "responsecode#callback-status-code", // HAPUS /
             },
           ],
         },
-        "/sandboxtesting",
-        "/listbank",
+        "sandboxtesting", // HAPUS /
+        "listbank", // HAPUS /
       ],
     },
     {
       type: "link",
-      to: "/api-reference", 
+      to: "api-reference", // HAPUS /
       label: "API Reference",
       badge: {
         label: "New",
@@ -127,17 +127,18 @@ const config: ZudokuConfig = {
     },
   ],
 
+  // Redirect juga dibersihkan
   redirects: [
-    { from: "/", to: "/introduction" },
-    { from: "/en/introduction", to: "/introduction" }, 
-    { from: "/id/introduction", to: "/introduction" } 
+    { from: "/", to: "introduction" },
+    { from: "en/introduction", to: "introduction" }, 
+    { from: "id/introduction", to: "introduction" } 
   ],
   
   apis: [
     {
       type: "file",
       input: "./apis/disbursement-api.yaml", 
-      path: "/api-reference", // 2. Dikembalikan menggunakan path (Fix Error 2)
+      path: "api-reference", // HAPUS / (Sangat Penting!)
     }
   ],
 };
