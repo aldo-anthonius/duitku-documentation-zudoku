@@ -2,12 +2,15 @@ import type { ZudokuConfig } from "zudoku";
 import { customCss } from "./src/custom";
 
 const config: ZudokuConfig = {
+  // PENTING: Ini yang bikin GitHub Pages tahu jalan pulangnya
   basePath: "/duitku-documentation-zudoku",
+  
   search: {
     type: "pagefind",
     maxSubResults: 3, 
   },
   
+  // 1. Logo dikembalikan ke tempat asalnya (Fix Error 1)
   site: {
     logo: {
       src: { light: "/logos/logo duitku transparent.png", dark: "/logos/logo duitku transparent.png" },
@@ -61,9 +64,10 @@ const config: ZudokuConfig = {
       ring: "#0ea5e9",
       radius: "0.5rem",
     },
-    customCss: customCss,
+    customCss: customCss, 
   },
 
+  // Menggunakan navigasi aslimu yang sudah terbukti jalan
   navigation: [
     {
       type: "category",
@@ -129,12 +133,11 @@ const config: ZudokuConfig = {
     { from: "/id/introduction", to: "/introduction" } 
   ],
   
-
   apis: [
     {
       type: "file",
       input: "./apis/disbursement-api.yaml", 
-      path: "/api-reference", 
+      path: "/api-reference", // 2. Dikembalikan menggunakan path (Fix Error 2)
     }
   ],
 };
