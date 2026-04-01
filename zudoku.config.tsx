@@ -2,7 +2,7 @@ import type { ZudokuConfig } from "zudoku";
 import { customCss } from "./src/custom";
 
 const config: ZudokuConfig = {
-  basePath: "//duitku-documentation-zudoku",
+  basePath: "/duitku-documentation-zudoku",
   search: {
     type: "pagefind",
     maxSubResults: 3, 
