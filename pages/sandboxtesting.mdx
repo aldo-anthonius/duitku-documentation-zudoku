@@ -1,0 +1,37 @@
+---
+title: "Sandbox Testing"
+---
+
+## Sandbox Scenarios
+
+Below is a list of **BankAccount** parameters that must be set in the *disbursement inquiry* and *disbursement transfer* parameters in the *Sandbox Environment*.
+
+<br/>
+
+### Sandbox - Inquiry Test
+
+| Bank Account | Response Code | Description |
+| :--- | :---: | :--- |
+| 8760673566 | 00 | Success |
+| 8760673511 | TO | Timeout |
+| 8760673512 | -100 | Other error |
+| 8760673513 | LD | *Link Down* |
+| 8760673514 | 91 | Database issue |
+| 8760673515 | 89 | *Link to host down* |
+
+<br/>
+
+### Sandbox - Transfer Test
+
+If you receive a *response* of TO, 68, or -100, it indicates that there was an issue during the *transfer* process. It is not recommended to retry the process.
+
+| Bank Account | Response Code | Description |
+| :--- | :---: | :--- |
+| 8760673566 | 00 | Success |
+| 8760673559 | LD | *Link Down* |
+| 8760673560 | 91 | Database issue |
+| 8760673561 | TO | Timeout |
+| 8760673562 | -510 | Insufficient wallet balance |
+| 8760673563 | 89 | *Link to host down* |
+| 8760673564 | 68 | Timeout |
+| 8760673565 | -100 | Other error |

@@ -1,0 +1,48 @@
+---
+title: "Callback"
+---
+
+Duitku will send a response in the form of an HTTP POST return value. The merchant is required to provide an endpoint to receive the callback response from Duitku.
+
+### Configuration & Whitelist
+
+1. Please add the following Duitku outgoing IPs to your server's whitelist requirements:
+
+   **Production:** `182.23.85.8`, `182.23.85.9`, `182.23.85.10`, `182.23.85.13`, `182.23.85.14`, `103.177.101.184`, `103.177.101.185`, `103.177.101.186`, `103.177.101.189`, `103.177.101.190`
+
+   **Sandbox:** `182.23.85.11`, `182.23.85.12`, `103.177.101.187`, `103.177.101.188`
+
+2. To configure the callback URL on the Duitku system, please contact us via Live Chat or email at support@duitku.com.
+
+---
+
+## Parameters
+
+Callback is only available for H2H (Host-to-Host) integration type.
+
+- **Method:** `HTTP POST`
+- **Type:** `application/json`
+
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| **disburseId** | String(255) | Disbursement ID from Duitku, obtained after a successful inquiry process. |
+| **userId** | int | Merchant ID, obtained after the disbursement feature is activated by Duitku. |
+| **email** | String(255) | Merchant email used for Duitku registration. |
+| **bankCode** | String(255) | Destination bank code. List of bank codes can be found [here](/en/listbank). |
+| **bankAccount** | String(255) | Destination bank account number. |
+| **amountTransfer** | int | Nominal transaction amount. Without decimal points (.) and without decimal digits. |
+| **accountName** | String(255) | Destination account holder name. |
+| **custRefNumber** | String(255) | Customer reference number. |
+| **statusCode** | String(255) | Status code `00` = Success. Detail and description of response codes can be found [here](/en/responsecode). |
+| **statusDesc** | String(255) | Description of the status code. |
+| **errorMessage** | String(255) | Error description if the status is *Failed* or *Pending*. |
+| **signature** | String(255) | Formula: `SHA256(email + bankCode + bankAccount + accountName + custRefNumber + amountTransfer + disburseId + secretKey)`. |
+
+<br/>
+:::info
+Note:
+- If the callback response is not HTTP status 200, we will resend the notification (maximum 5 times).
+- For transaction callbacks with status code **68**, please wait until H+1 (next working day) to obtain the final transaction status.
+- For updates on the transaction status, you can do so by calling the [API Inquiry Status](/en/checkstatus).
+- Please contact us on Live Chat or email at support@duitku.com if there are further questions.
+:::

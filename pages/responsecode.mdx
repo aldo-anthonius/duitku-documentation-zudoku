@@ -1,0 +1,24 @@
+---
+title: "Response Code"
+---
+
+## Status Code
+
+| Response Code | Description |
+| :--- | :--- |
+| 00 | Approved / Success. |
+| EE | *General Error*. |
+| TO | *Response Timeout* from the ATM Bersama network (Do not retry). |
+| LD | Link issue between Duitku and the ATM Bersama network. |
+| NF | Transaction has not been recorded in the Remittance gateway. |
+| 76 | Invalid destination account number. |
+| 80 | Waiting for callback (for Clearing H2H). |
+| -100 | Other errors (Do not retry). |
+
+## Callback Status Code
+
+| Status Code | Description |
+| :--- | :--- |
+| 00 | Success. |
+| 01 | Failed. |
+| 68 | Pending (Do not retry). |

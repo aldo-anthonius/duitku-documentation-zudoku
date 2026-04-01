@@ -1,16 +1,43 @@
 ---
-title: Welcome to Zudoku
+title: Initial Steps (Disbursement v2)
 ---
 
-Thanks for choosing to use Zudoku to power your API documentation!
+Welcome to the Duitku Disbursement API page.  
+This API can only be used if the disbursement feature has been activated for your account.  
+On this page, Duitku provides several features, including:
 
-## Edit this page
+## Online Transfer
 
-To edit this page, open the `pages/introduction.mdx` file.
+The Online Transfer process is a feature that helps merchants transfer funds automatically via the API or Duitku Dashboard.  
+It is already connected to more than 140 banks in Indonesia.  
+This service is available 24/7 and can be performed in real time.  
+Transfers are limited from IDR 50 up to IDR 100 million per transaction, depending on the recipient’s bank account.
 
-## Configuration
+## Clearing
 
-You can find the full configuration for your Zudoku site in the `zudoku.config.tsx` file.
+The Clearing process is a feature that helps merchants perform fund clearing automatically via the API or Duitku Dashboard based on the available integration types.
 
-For further information on how to customize your site, check out the
-[Zudoku documentation](https://zudoku.dev/docs).
+There are four types of clearing integrations:
+
+1. **LLG (Lalu Lintas Giro)**  
+   LLG transfer is an interbank transfer covering more than 130 banks in Indonesia.  
+   The maximum transaction amount is IDR 1,000,000,000.  
+   The transfer process follows Bank Indonesia (BI) schedules, which are from 08:00 to 15:00 on business days.
+
+2. **RTGS (Real-Time Gross Settlement)**  
+   RTGS transfer is an interbank transfer covering more than 130 banks in Indonesia.  
+   The minimum transaction amount is IDR 100,000,000.  
+   The transfer process follows Bank Indonesia (BI) schedules, which are from 08:00 to 15:00 on business days.
+
+3. **H2H (Bank Host to Host)**  
+   Duitku Host-to-Host connection to banks ensures direct connectivity and better reliability.  
+   Currently, it supports 6 major banks in Indonesia (BCA, BNI, BRI, Mandiri, Permata, CIMB).  
+   Transfer schedules follow each respective bank’s schedule.
+
+4. **BI-FAST (Bank Indonesia Fast Payment)**  
+   A national retail payment system that facilitates real-time retail payments that are secure, efficient, affordable, and available 24/7.
+
+## Cash Out
+
+The Cash Out process is a feature that helps merchants withdraw funds automatically via the API or Duitku Dashboard.  
+Currently, it is only supported by 2 channels: POS Indonesia and Indomaret.

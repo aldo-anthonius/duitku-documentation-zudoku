@@ -1,0 +1,385 @@
+openapi: 3.0.3
+info:
+  title: Duitku Disbursement API
+  version: 1.0.0
+  description: API Documentation for Duitku Disbursement feature.
+servers:
+  - url: https://da7f045c-5294-4f50-865d-4f08695b7b2e.mock.pstmn.io
+    description: Postman Mock Server (Testing)
+  - url: https://sandbox.duitku.com/webapi/api/disbursement
+    description: Sandbox Server
+
+# 1. SECRET KEY AUTHORIZATION
+components:
+  securitySchemes:
+    SecretKeyAuth:
+      type: apiKey
+      in: header
+      name: X-Secret-Key
+      description: "Enter your Secret Key from the Duitku dashboard"
+
+security:
+  - SecretKeyAuth: []
+
+paths:
+  /inquirysandbox:
+    post:
+      summary: 🔍 Inquiry Request
+      description: |
+        <div class="auth-box">
+          <div class="auth-title">Authorization</div>
+          <div class="auth-content">
+            <strong>X-Secret-Key</strong> <code>string</code><br/><br/>
+            Your Secret Key for the API. You can find it in your Duitku dashboard integration settings.
+          </div>
+        </div>
+
+        The first step in the disbursement process begins with making an inquiry to the Duitku system.
+        
+        <div class="alert-box">
+          <div class="alert-title">⚠️ Important Notes</div>
+          <div class="alert-content">
+            <ul>
+              <li>The <code>signature</code> parameter must be generated dynamically on your backend using <strong>SHA256</strong>.</li>
+              <li>Ensure all required fields are filled correctly before proceeding to the transfer step.</li>
+            </ul>
+          </div>
+        </div>
+      tags:
+        - Transfer Online
+      requestBody:
+        required: true
+        content:
+          application/json:
+            examples:
+              inquiry done:
+                summary: "Skenario Sukses"
+                value:
+                  userId: 3551
+                  amountTransfer: "20000"
+                  bankAccount: "8760673566"
+                  bankCode: "013"
+                  email: "test@chakratechnology.com"
+                  purpose: "Test Local"
+                  timestamp: 1678901234
+                  custRefNumber: "000000000200"
+                  senderId: 23423
+                  senderName: "sender testing"
+                  signature: "abcde12345signature..."
+              
+              inquiry timeout:
+                summary: "Skenario Timeout Error (504)"
+                value:
+                  userId: 3551
+                  amountTransfer: "20000"
+                  bankAccount: "8760673511" 
+                  bankCode: "013"
+                  email: "test@chakratechnology.com"
+                  purpose: "Test Local"
+                  timestamp: 1678901234
+                  custRefNumber: "000000000200"
+                  senderId: 23423
+                  senderName: "sender testing"
+                  signature: "abcde12345signature..."
+
+            schema:
+              type: object
+              required:
+                - userId
+                - amountTransfer
+                - bankAccount
+                - bankCode
+                - email
+                - signature
+                - timestamp
+              properties:
+                userId:
+                  type: integer
+                  description: "Your Merchant ID."
+                  example: 3551
+                amountTransfer:
+                  type: string
+                  description: "Transfer amount."
+                  default: "0" 
+                  example: "20000"
+                bankAccount:
+                  type: string
+                  description: "Destination bank account number."
+                  minLength: 5 
+                  maxLength: 20
+                  example: "8760673566"
+                bankCode:
+                  type: string
+                  description: "Destination bank code."
+                  default: "013" 
+                  example: "013"
+                email:
+                  type: string
+                  format: email 
+                  description: "Registered merchant email."
+                  example: "test@chakratechnology.com"
+                purpose:
+                  type: string
+                  description: "Transfer remarks/purpose (Optional)."
+                  maxLength: 255 
+                  example: "Test Local"
+                timestamp:
+                  type: integer
+                  format: int64 
+                  description: "Request time in epoch milliseconds format."
+                  example: 1678901234
+                custRefNumber:
+                  type: string
+                  description: "Internal reference number from your system."
+                  example: "000000000200"
+                senderId:
+                  type: integer
+                  description: "Sender ID."
+                  example: 23423
+                senderName:
+                  type: string
+                  description: "Sender Name."
+                  example: "sender testing"
+                signature:
+                  type: string
+                  description: |
+                    SHA256 encryption result.
+                    
+                    **Formula:**
+                    `SHA256(email + timestamp + bankCode + bankAccount + amountTransfer + purpose + secretKey)`
+                    
+                    **Contoh Implementasi pada code**
+                    ```
+                    $paramSignature = email + $timestamp + bankCode + bankAccount + amountTransfer + purpose + secretKey; 
+                    $signature = hash('sha256', $paramSignature);
+                    ```
+                  example: "abcde12345signature..."
+
+      # ==========================================
+      # RESPONSES INQUIRY
+      # ==========================================
+      responses:
+        "200":
+          description: "Successful Request - Inquiry Found"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  responseCode:
+                    type: string
+                    description: "Status code of the request (00 means Success)."
+                  responseDesc:
+                    type: string
+                    description: "Description of the response status."
+                  disburseId:
+                    type: string
+                    description: "Unique disbursement ID. **Save this ID** for the Transfer Request step."
+                  accountName:
+                    type: string
+                    description: "The registered name of the destination bank account holder."
+              example:
+                responseCode: "00"
+                responseDesc: "SUCCESS"
+                disburseId: "12345678"
+                accountName: "TEST ACCOUNT"
+        "400":
+          description: "Bad Request - Missing or Invalid Parameters"
+          content:
+            application/json:
+              example:
+                responseCode: "01"
+                responseDesc: "FAILED - MISSING MANDATORY PARAMETER"
+                disburseId: ""
+                accountName: ""
+        "401":
+          description: "Unauthorized - Unregistered or Inactive Merchant"
+          content:
+            application/json:
+              example:
+                responseCode: "02"
+                responseDesc: "FAILED - UNREGISTERED MERCHANT"
+                disburseId: ""
+                accountName: ""
+        "403":
+          description: "Forbidden - Invalid Signature or IP not whitelisted"
+          content:
+            application/json:
+              example:
+                responseCode: "03"
+                responseDesc: "FAILED - INVALID SIGNATURE"
+                disburseId: ""
+                accountName: ""
+        "500":
+          description: "Internal Server Error"
+          content:
+            application/json:
+              example:
+                responseCode: "EE"
+                responseDesc: "FAILED - INTERNAL SERVER ERROR"
+                disburseId: ""
+                accountName: ""
+
+  /transfersandbox:
+    post:
+      summary: 💸 Transfer Request
+      description: |
+        <div class="auth-box">
+          <div class="auth-title">Authorization</div>
+          <div class="auth-content">
+            <strong>X-Secret-Key</strong> <code>string</code><br/><br/>
+            Your Secret Key for the API. You can find it in your Duitku dashboard integration settings.
+          </div>
+        </div>
+
+        The second step to execute the transfer after getting the `disburseId` from the Inquiry.
+        
+        <div class="alert-box">
+          <div class="alert-title">⚠️ Important Notes</div>
+          <div class="alert-content">
+            <ul>
+              <li>You need to pass the <code>disburseId</code> obtained from the inquiry to process the transfer..</li>
+              <li>Ensure the <strong>accountName</strong> matches the result from the inquiry.</li>
+            </ul>
+          </div>
+        </div>
+      tags:
+        - Transfer Online
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              userId: 3551
+              amountTransfer: "20000"
+              bankAccount: "8760673566"
+              accountName: "TEST ACCOUNT"
+              custRefNumber: "000000000200"
+              bankCode: "013"
+              email: "test@chakratechnology.com"
+              purpose: "Test Local"
+              timestamp: 1678901234
+              disburseId: "12345678"
+              signature: "abcde12345..."
+            schema:
+              type: object
+              required:
+                - userId
+                - amountTransfer
+                - bankAccount
+                - accountName
+                - bankCode
+                - email
+                - timestamp
+                - disburseId
+                - signature
+              properties:
+                userId:
+                  type: integer
+                  description: "Your Merchant ID."
+                  example: 3551
+                amountTransfer:
+                  type: string
+                  description: "Transfer amount."
+                  example: "20000"
+                bankAccount:
+                  type: string
+                  description: "Destination bank account number."
+                  minLength: 5
+                  maxLength: 20
+                  example: "8760673566"
+                accountName:
+                  type: string
+                  description: "Destination bank account name obtained from Inquiry."
+                  example: "TEST ACCOUNT"
+                custRefNumber:
+                  type: string
+                  description: "Internal reference number from your system (Optional)."
+                  example: "000000000200"
+                bankCode:
+                  type: string
+                  description: "Destination bank code."
+                  default: "013"
+                  example: "013"
+                email:
+                  type: string
+                  format: email
+                  description: "Registered merchant email."
+                  example: "test@chakratechnology.com"
+                purpose:
+                  type: string
+                  description: "Transfer remarks/purpose (Optional)."
+                  maxLength: 255
+                  example: "Test Local"
+                timestamp:
+                  type: integer
+                  format: int64
+                  description: "Request time in epoch milliseconds format."
+                  example: 1678901234
+                disburseId:
+                  type: string
+                  description: "The disbursement ID obtained from a successful Inquiry request."
+                  example: "12345678"
+                signature:
+                  type: string
+                  description: |
+                    SHA256 encryption result.
+                    
+                    **Formula:**
+                    `SHA256(email + timestamp + bankCode + bankAccount + accountName + custRefNumber + amountTransfer + purpose + disburseId + secretKey)`
+                    
+                    **Contoh Implementasi pada code**
+                    ```
+                    $paramSignature = email + timestamp + bankCode + bankAccount + accountName + custRefNumber + amountTransfer + purpose + disburseId + secretKey; 
+                    $signature = hash('sha256', $paramSignature);
+                    ```
+                  example: "abcde12345..."
+                  
+      # ==========================================
+      # RESPONSES TRANSFER
+      # ==========================================
+      responses:
+        "200":
+          description: "Successful Transfer"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  responseCode:
+                    type: string
+                    description: "Status code of the request (00 means Success)."
+                  responseDesc:
+                    type: string
+                    description: "Description of the response status."
+              example:
+                responseCode: "00"
+                responseDesc: "SUCCESS"
+        "400":
+          description: "Bad Request - Invalid Parameters or Invalid Disburse ID"
+          content:
+            application/json:
+              example:
+                responseCode: "01"
+                responseDesc: "FAILED - INVALID DISBURSE ID"
+        "401":
+          description: "Unauthorized - Unregistered Merchant"
+          content:
+            application/json:
+              example:
+                responseCode: "02"
+                responseDesc: "FAILED - UNREGISTERED MERCHANT"
+        "403":
+          description: "Forbidden - Invalid Signature or IP not whitelisted"
+          content:
+            application/json:
+              example:
+                responseCode: "03"
+                responseDesc: "FAILED - INVALID SIGNATURE"
+        "500":
+          description: "Internal Server Error - Bank Network Issue"
+          content:
+            application/json:
+              example:
+                responseCode: "EE"
+                responseDesc: "FAILED - INTERNAL SERVER ERROR"
