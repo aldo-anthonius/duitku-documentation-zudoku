@@ -32,15 +32,14 @@ jobs:
       - name: Build Project
         run: |
           npm run build
-          cp dist/index.html dist/404.html
-
+          cp dist/duitku-documentation-zudoku/index.html dist/duitku-documentation-zudoku/404.html
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v4
 
       - name: Upload Artifact (Folder dist)
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist'
+          path: './dist/duitku-documentation-zudoku'
 
       - name: Deploy to GitHub Pages
         id: deployment
