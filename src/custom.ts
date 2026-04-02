@@ -95,72 +95,10 @@ export const customCss = `
     display: none !important;
   }
 
-  /* ========================================= */
-  /* POLISHING TAMPILAN API REFERENCE (UI/UX)  */
-  /* ========================================= */
-
-  /* 1. Bikin Card (Kotak Request/Response) Lebih Mewah / Mengambang */
-  main [data-pagefind-body] > div > div.border,
-  main .prose > div.border {
-    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05) !important;
-    border-color: #e2e8f0 !important;
-    border-radius: 12px !important;
-    transition: all 0.3s ease !important;
+  /* Menargetkan menu Transfer Online dan Response Code di Sidebar */
+  a[href$="/transferonline"],
+  a[href$="/responsecode"] {
+      font-weight: 700 !important; /* Membuat teks jadi Bold */
+      font-size: 1.05rem !important; /* Memperbesar sedikit ukuran teks (standar biasanya 0.875rem atau 1rem) */
   }
-  
-  /* Hover effect biar interaktif */
-  main .prose > div.border:hover {
-    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1) !important;
-    border-color: #cbd5e1 !important;
-  }
-
-  html.dark main .prose > div.border {
-    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3) !important;
-    border-color: #334155 !important;
-    background-color: #0f172a !important; /* Warna dark mode lebih pekat */
-  }
-
-  /* 2. Percantik Nama Parameter (userId, amountTransfer, dll) */
-  .prose span.font-mono {
-    color: #0284c7 !important; /* Biru terang */
-    background-color: #f0f9ff !important; /* Background biru super pudar */
-    padding: 2px 6px !important;
-    border-radius: 4px !important;
-    border: 1px solid #bae6fd !important;
-    font-size: 13px !important;
-  }
-
-  html.dark .prose span.font-mono {
-    color: #38bdf8 !important;
-    background-color: #0c4a6e !important;
-    border: 1px solid #0284c7 !important;
-  }
-
-  /* 3. Percantik Kotak "Example:" di bawah parameter */
-  .prose code:not([class*="language-"]) {
-    background-color: #f1f5f9 !important;
-    color: #475569 !important;
-    border-radius: 4px !important;
-    padding: 2px 6px !important;
-    font-size: 13px !important;
-  }
-
-  html.dark .prose code:not([class*="language-"]) {
-    background-color: #1e293b !important;
-    color: #cbd5e1 !important;
-  }
-
-  /* 4. Percantik Tombol/Pill (misal tab 200, 400 di Responses) */
-  [role="tablist"] {
-    background-color: #f8fafc !important;
-    border-radius: 8px !important;
-    padding: 4px !important;
-    border: 1px solid #e2e8f0 !important;
-  }
-  
-  html.dark [role="tablist"] {
-    background-color: #1e293b !important;
-    border-color: #334155 !important;
-  }
-
 `;
