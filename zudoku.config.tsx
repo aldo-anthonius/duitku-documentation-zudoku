@@ -12,8 +12,8 @@ const config: ZudokuConfig = {
   site: {
     logo: {
       src: { 
-        light: "logos/logo duitku transparent.png", 
-        dark: "logos/logo duitku transparent.png" 
+        light: "/logos/logo duitku transparent.png", 
+        dark: "/logos/logo duitku transparent.png" 
       },
       alt: "Zudoku",
       width: "70px",
@@ -74,71 +74,51 @@ const config: ZudokuConfig = {
       label: "Getting Started",
       icon: "sparkles",
       items: [
-        "introduction", // HAPUS / di depan
+        "/introduction",
         {
           type: "category",
           label: "Transfer Online",
-          link: { type: "doc", file: "transferonline" }, // HAPUS /
+          link: { type: "doc", file: "/transferonline" },
           items: [
-            {
-              type: "link",
-              label: "Transfer Online Transaction Flow",
-              to: "transferonline#online-transfer-transaction-flow", // HAPUS /
-            },
-            {
-              type: "link",
-              label: "Transfer Online Inquiry Request",
-              to: "transferonline#transfer-online-inquiry-request", // HAPUS /
-            },
-            {
-              type: "link",
-              label: "Transfer Online Transfer Request",
-              to: "transferonline#transfer-online-transfer-request", // HAPUS /
-            },
+            { type: "link", label: "Transfer Online Transaction Flow", to: "/transferonline#online-transfer-transaction-flow" },
+            { type: "link", label: "Transfer Online Inquiry Request", to: "/transferonline#transfer-online-inquiry-request" },
+            { type: "link", label: "Transfer Online Transfer Request", to: "/transferonline#transfer-online-transfer-request" },
           ],
         },
-        "checkstatus", // HAPUS /
-        "checkbalance", // HAPUS /
-        "callback", // HAPUS /
+        "/checkstatus", 
+        "/checkbalance", 
+        "/callback", 
         {
           type: "category",
           label: "Response Code",
-          link: { type: "doc", file: "responsecode" }, // HAPUS /
+          link: { type: "doc", file: "/responsecode" },
           items:[
-            {
-              type: "link",
-              label: "Callback Status Code",
-              to: "responsecode#callback-status-code", // HAPUS /
-            },
+            { type: "link", label: "Callback Status Code", to: "/responsecode#callback-status-code" },
           ],
         },
-        "sandboxtesting", // HAPUS /
-        "listbank", // HAPUS /
+        "/sandboxtesting", 
+        "/listbank", 
       ],
     },
     {
       type: "link",
-      to: "api-reference", // HAPUS /
+      to: "/api-reference",
       label: "API Reference",
-      badge: {
-        label: "New",
-        color: "purple",
-      },
+      badge: { label: "New", color: "purple" },
     },
   ],
 
-  // Redirect juga dibersihkan
   redirects: [
-    { from: "/", to: "introduction" },
-    { from: "en/introduction", to: "introduction" }, 
-    { from: "id/introduction", to: "introduction" } 
+    { from: "/", to: "/introduction" },
+    { from: "/en/introduction", to: "/introduction" }, 
+    { from: "/id/introduction", to: "/introduction" } 
   ],
   
   apis: [
     {
       type: "file",
       input: "./apis/disbursement-api.yaml", 
-      path: "api-reference", // HAPUS / (Sangat Penting!)
+      path: "/api-reference", 
     }
   ],
 };

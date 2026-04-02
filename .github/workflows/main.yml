@@ -30,7 +30,9 @@ jobs:
         run: npm install
 
       - name: Build Project
-        run: npm run build
+        run: |
+          npm run build
+          cp dist/index.html dist/404.html
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v4
@@ -38,7 +40,7 @@ jobs:
       - name: Upload Artifact (Folder dist)
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist' # Ini folder hasil masakan Zudoku
+          path: './dist'
 
       - name: Deploy to GitHub Pages
         id: deployment
