@@ -3,7 +3,10 @@ import { customCss } from "./src/custom";
 
 const config: ZudokuConfig = {
   basePath: "/duitku-documentation-zudoku",
-  
+  metadata: {
+    title: "Duitku Disbursement Docs",
+    favicon: "/logos/logo duitku transparent.png",
+  },
   search: {
     type: "pagefind",
     maxSubResults: 3, 
@@ -18,7 +21,26 @@ const config: ZudokuConfig = {
       alt: "Zudoku",
       width: "70px",
     },
+    footer: {
+      position: "center",
+      copyright: `© ${new Date().getFullYear()} PT Duitku. All rights reserved.`,
+      social: [
+        {
+          icon: "github",
+          href: "https://github.com/duitku", 
+        },
+        {
+          icon: "x",
+          href: "https://twitter.com/duitku",
+        },
+        {
+          icon: "instagram", 
+          href: "https://duitku.com", 
+        }
+      ]
+    }
   },
+
   
   theme: {
     light: {
