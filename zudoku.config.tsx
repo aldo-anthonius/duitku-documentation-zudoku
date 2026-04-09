@@ -1,10 +1,10 @@
 import type { ZudokuConfig } from "zudoku";
 import { customCss } from "./src/custom";
 
-const myBase = process.env.NODE_ENV === "production" ? "/duitku-documentation-zudoku" : "";
+const myBase = "/duitku-documentation-zudoku";
+
 const config: ZudokuConfig = {
-  // basePath: "/duitku-documentation-zudoku",
-  basePath: process.env.NODE_ENV === "production" ? "/duitku-documentation-zudoku" : undefined,
+  basePath: myBase,
   metadata: {
     title: "Duitku Disbursement Docs",
     favicon: `${myBase}/logos/logo-duitku.png`,
