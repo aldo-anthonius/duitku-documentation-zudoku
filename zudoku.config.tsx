@@ -17,10 +17,10 @@ const config: ZudokuConfig = {
   site: {
     logo: {
       src: { 
-        light: `${myBase}/logos/logo-duitku.png`, 
-        dark: `${myBase}/logos/logo-duitku.png` 
+        light: "/logos/logo-duitku.png", 
+        dark: "/logos/logo-duitku.png" 
       },
-      alt: "Zudoku",
+      alt: "Duitku",
       width: "70px",
     },
     footer: {
