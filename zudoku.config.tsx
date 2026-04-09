@@ -5,7 +5,7 @@ const config: ZudokuConfig = {
   basePath: "/duitku-documentation-zudoku",
   metadata: {
     title: "Duitku Disbursement Docs",
-    favicon: "/logos/logo duitku transparent.png",
+    favicon: "/logos/logo-duitku.png",
   },
   search: {
     type: "pagefind",
@@ -15,8 +15,8 @@ const config: ZudokuConfig = {
   site: {
     logo: {
       src: { 
-        light: "/logos/logo duitku transparent.png", 
-        dark: "/logos/logo duitku transparent.png" 
+        light: "/logos/logo-duitku.png", 
+        dark: "/logos/logo-duitku.png" 
       },
       alt: "Zudoku",
       width: "70px",
