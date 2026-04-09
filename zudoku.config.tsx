@@ -7,7 +7,7 @@ const config: ZudokuConfig = {
   basePath: process.env.NODE_ENV === "production" ? "/duitku-documentation-zudoku" : undefined,
   metadata: {
     title: "Duitku Disbursement Docs",
-    favicon: "/logos/logo-duitku.png",
+    favicon: `${myBase}/logos/logo-duitku.png`,
   },
   search: {
     type: "pagefind",
@@ -17,8 +17,8 @@ const config: ZudokuConfig = {
   site: {
     logo: {
       src: { 
-        light: "/logos/logo-duitku.png", 
-        dark: "/logos/logo-duitku.png" 
+        light: `${myBase}/logos/logo-duitku.png`, 
+        dark: `${myBase}/logos/logo-duitku.png` 
       },
       alt: "Zudoku",
       width: "70px",
