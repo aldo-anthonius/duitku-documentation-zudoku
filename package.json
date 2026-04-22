@@ -16,7 +16,7 @@
     "http-proxy-middleware": "^3.0.5",
     "react": ">=19.0.0",
     "react-dom": ">=19.0.0",
-    "zudoku": "0.71.1"
+    "zudoku": "^0.73.1"
   },
   "devDependencies": {
     "@types/crypto-js": "^4.2.2",

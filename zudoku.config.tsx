@@ -8,6 +8,7 @@ const config: ZudokuConfig = {
   metadata: {
     title: "Duitku Disbursement Docs",
     favicon: `${myBase}/logos/logo-duitku.png`,
+    // favicon: "/logos/logo-duitku.png",
   },
   search: {
     type: "pagefind",
@@ -99,14 +100,24 @@ const config: ZudokuConfig = {
       icon: "sparkles",
       items: [
         "/introduction",
+        "/why-duitku-v2",
+        {
+          type: "category",
+          label: "SNAP Registration & Auth",
+          link: "/authentication",
+          items: [
+            { type: "link", label: "Public and Private Key", to: "/authentication#public-key-and-private-key" },
+            { type: "link", label: "Signature", to: "/authentication#signature" },
+          ],
+        },
         {
           type: "category",
           label: "Transfer Online",
-          link: { type: "doc", file: "/transferonline" },
+          link: "/transferonline",
           items: [
-            { type: "link", label: "Transfer Online Transaction Flow", to: "/transferonline#online-transfer-transaction-flow" },
-            { type: "link", label: "Transfer Online Inquiry Request", to: "/transferonline#transfer-online-inquiry-request" },
-            { type: "link", label: "Transfer Online Transfer Request", to: "/transferonline#transfer-online-transfer-request" },
+            { type: "link", label: "Transfer Online Transaction Flow", to: "/transferonline#transaction-flow" },
+            { type: "link", label: "Step 1: Inquiry", to: "/transferonline#step-1-validate-account-inquiry" },
+            { type: "link", label: "Step 2: Transfer", to: "/transferonline#step-2-execute-transfer" },
           ],
         },
         "/checkstatus", 

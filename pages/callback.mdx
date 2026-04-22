@@ -28,12 +28,12 @@ Callback is only available for H2H (Host-to-Host) integration type.
 | **disburseId** | String(255) | Disbursement ID from Duitku, obtained after a successful inquiry process. |
 | **userId** | int | Merchant ID, obtained after the disbursement feature is activated by Duitku. |
 | **email** | String(255) | Merchant email used for Duitku registration. |
-| **bankCode** | String(255) | Destination bank code. List of bank codes can be found [here](/en/listbank). |
+| **bankCode** | String(255) | Destination bank code. List of bank codes can be found [here](/listbank). |
 | **bankAccount** | String(255) | Destination bank account number. |
 | **amountTransfer** | int | Nominal transaction amount. Without decimal points (.) and without decimal digits. |
 | **accountName** | String(255) | Destination account holder name. |
 | **custRefNumber** | String(255) | Customer reference number. |
-| **statusCode** | String(255) | Status code `00` = Success. Detail and description of response codes can be found [here](/en/responsecode). |
+| **statusCode** | String(255) | Status code `00` = Success. Detail and description of response codes can be found [here](/responsecode). |
 | **statusDesc** | String(255) | Description of the status code. |
 | **errorMessage** | String(255) | Error description if the status is *Failed* or *Pending*. |
 | **signature** | String(255) | Formula: `SHA256(email + bankCode + bankAccount + accountName + custRefNumber + amountTransfer + disburseId + secretKey)`. |
@@ -43,6 +43,6 @@ Callback is only available for H2H (Host-to-Host) integration type.
 Note:
 - If the callback response is not HTTP status 200, we will resend the notification (maximum 5 times).
 - For transaction callbacks with status code **68**, please wait until H+1 (next working day) to obtain the final transaction status.
-- For updates on the transaction status, you can do so by calling the [API Inquiry Status](/en/checkstatus).
+- For updates on the transaction status, you can do so by calling the [API Inquiry Status](/checkstatus).
 - Please contact us on Live Chat or email at support@duitku.com if there are further questions.
 :::

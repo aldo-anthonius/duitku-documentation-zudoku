@@ -1,0 +1,146 @@
+---
+title: "SNAP Registration & Authentication"
+---
+
+To use the standardized API by SNAP, merchants need to obtain approval from ASPI in the form of a recommendation letter. To receive this letter, merchants must conduct a developer site test and functionality test.
+
+## SNAP Registration at Duitku
+
+1. **Developer Site Test:** This test is conducted on the ASPI page to ensure that the API complies with SNAP's technical and security standards. Merchants must register on the [registration page at ASPI](https://apidevportal.aspi-indonesia.or.id/sign-up). Merchants can perform the test by following the [developer site test guideline](https://apidevportal.aspi-indonesia.or.id/pedoman/ASPI%20-%20Pedoman%20Pengelolaan%20Developer%20Site.pdf) on the ASPI website. The developer site test includes at least 1 positive test scenario and 1 negative scenario for each sub-API used.
+2. **Functionality Test:** Once the developer site test results meet the standards, merchants can proceed with the provided [Functionality Test](#). The functionality test is conducted to test the SNAP API components that have been integrated with Duitku end-to-end.
+
+Before starting SNAP integration, you need to register for SNAP at Duitku. Please send the public key, information, and required documents using the email registered with Duitku to **[info_tech@duitku.com](mailto:info_tech@duitku.com)**.
+
+You need to send **2 separate emails** to Duitku. To facilitate the registration process, you must use **the primary email registered with Duitku**. Below are the information and documents you need to attach when sending these emails:
+
+### First Email:
+
+1. **API Services.** The API services provided by Duitku:
+   * Transfer Intrabank (H2H)
+   * Transfer Interbank (RTOL)
+   * Transfer BI-Fast
+   * Transfer SKNBI
+   * Transfer RTGS
+   * E Wallet Top Up
+2. **Zip file containing Public Key** in `.pem` format and protected by a password. For instructions on creating a public key, refer to the Public Key and Private Key guidelines below.
+
+### Second Email:
+
+1. Password to open the zip file containing the public key sent previously.
+
+---
+
+## API Authentication
+
+The authentication in the SNAP API there is:
+1. **Private Key and Public Key**
+2. **Bearer Token**
+3. **Signature**
+
+:::warning{title="Note"}
+If you have integrated **[SNAP for Payment Gateway](#)**, API tokens use the same API but with different credentials such as your client key, client ID, etc. Please ensure you use the correct credentials. Otherwise, you will not be able to use the API services with the swapped tokens. Payment gateways will only generate tokens for payment gateway services and the same goes for disbursement. Even though they're in the same API URL.
+:::
+
+## Public Key and Private Key
+
+Create an RSA key pair for your access. Save the private key and keep it safe and secure. Then you need to send the public key to Duitku to give you access to request the API. Make sure you generate the key within **2048-bit**.
+
+Here is an example of how you can create an RSA public and private key:
+
+1. You could use **[Git](https://git-scm.com/)** OpenSSL.
+2. Git OpenSSL usually needs to run on its directory. Run the command below. (Windows Example)
+   ```bash
+   cd "..\..\Program Files\Git\usr\bin"
+3. Then, create the private key using these commands
+    ```bash
+    openssl genrsa -out C:\Users\{your_users}\Desktop\PrivateKey.pem 2048
+4. After you create the private key you can create the public key using the private key with the commands below:
+    ```bash
+    openssl rsa -in C:\Users\{your_users}\Desktop\PrivateKey.pem -pubout -out C:\Users\{your_users}\Desktop\Publickey.pem
+
+Now, you should have the RSA key pair. Next, you need to save and put the private key on your project and send the public key to Duitku. You might need the private key in your project so your project would have to keep the access.
+
+---
+
+## Bearer Token (Get Token API)
+
+When you're working with web APIs, a **Bearer Token** is an access token that acts like a security key. The server uses it to verify that the request is coming from an authenticated user or service.
+
+To execute transaction requests in the SNAP API (like Inquiry or Transfer), you must first obtain this token by calling the **Get Token API (B2B)**. 
+
+* **Development URL:** `https://snapdev.duitku.com/auth/v1.0/access-token/b2b`
+* **Production URL:** `https://snap.duitku.com/auth/v1.0/access-token/b2b`
+
+You will need to pass your `X-CLIENT-KEY` and an **Asymmetric Signature** in the header. The token you receive will typically expire in 900 seconds (15 minutes).
+
+👉 **[View the complete Get Token API Reference here](/api-reference)**
+
+---
+
+## Signature
+The Signature security mechanism for the Payment API offers two distinct approaches. Firstly, utilizing the symmetric HMAC_512 cryptographic function, where an access token is integral to the process. Alternatively, the asymmetric SHA256withRSA cryptographic function can be employed, functioning independently of an access token.
+
+It is advisable for clients to adopt the symmetric HMAC_512 cryptographic function in conjunction with an access token when generating signatures for the Payment Method API. This method ensures a robust and secure approach.
+
+Conversely, the Notify Payment API will exclusively leverage the asymmetric SHA256withRSA cryptographic function, ensuring a specific and tailored security measure implemented by Duitku.
+
+It is crucial to note that these specifications align with the Payment API SNAP document provided by Bank Indonesia, which can be accessed **[here](https://apidevportal.aspi-indonesia.or.id/)**.
+
+Duitku's SNAP API relies on the use of API keys for request authentication, a crucial aspect that warrants special attention due to its numerous security features. Ensuring the utmost security of these API keys is paramount.
+
+In the transaction process involving Duitku's API, it is imperative for our partners to furnish the API Key as the designated credential, provided by Duitku. This key serves as the means of authenticating transactions through the bearer auth method, employing the header -H "Authorization: Bearer ". It is essential to note that all API requests must be made via HTTPS to guarantee a secure communication channel. Requests made through HTTP will not be successful.
+
+Furthermore, any attempt to access the API without proper authentication will result in failure, emphasizing the significance of adhering to the authentication protocols in place.
+
+Your cooperation in following these security measures is greatly appreciated, as it ensures a robust and secure environment for API transactions.
+
+### Symmetric
+
+The formula:
+
+```text
+stringToSign = HttpMethod + ":" + Endpoint + ":" + AccessToken + ":" + LowerCase(HexEncode(SHA-256(Minify(RequestBody)))) + ":" + Timestamp
+hash = HMAC_SHA512(stringToSign, secretKey)
+signature = Base64(hash)
+```
+
+Explanation:
+
+Compose a variable `stringToSign`.
+
+1. `HttpMethod` is a string of a method name that is in use. They could be `POST`, `PUT`, or `DELETE`.
+2. The `endpoint` is a relative URL or full path of URL without host or domain.
+3. `AccessToken` is a token value that you get from [API Get Token](#).
+4. `RequestBody` is a payload that you would like to send.
+5. `Timestamp` uses ISO-8601.
+6. `secretKey` is client secret or project API key.
+
+Hash `stringToSign` using `HMAC_SHA512` cryptographic and your secret key (the current other name is the API key). Then, encode with Base 64.
+
+Put the value to `X-SIGNATURE`.
+
+---
+
+### Asymmetric
+
+The formula:
+
+```text
+stringToSign = ClientKey + "|" + Timestamp
+hash = SHA256withRSA(stringToSign,privateKey)
+signature = Base64(hash)
+```
+
+Explanation:
+
+Compose a variable `stringToSign`.
+
+1. `ClientKey` is a project ID.
+2. `Timestamp` uses ISO-8601.
+3. `privateKey` is a generated RSA key by you. See [Public Key and Private Key](#public-and-private-key) to see how generate this.
+
+Hash `stringToSign` using `SHA256withRSA` cryptographic and your secret key (the current other name is the API key). Then, encode with Base 64.
+
+Put the value to `X-SIGNATURE`.
+
+---

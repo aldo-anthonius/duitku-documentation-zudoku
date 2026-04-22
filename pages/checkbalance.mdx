@@ -2,10 +2,32 @@
 title: "Check Balance"
 ---
 
-The Check Balance is used to check the available balance for disbursement.
+The **Check Balance API** allows you to programmatically retrieve your current available fund balance for disbursements. 
 
-## Check Balance Inquiry Request
+We highly recommend checking your balance before initiating large or batch transfers to ensure you have sufficient funds, thereby avoiding failed transactions.
 
-### Request Parameters
+## Common Use Cases
 
-### Response Parameters
+1. **Pre-Transfer Validation:** Call this API before executing the [Transfer Request](/transferonline#step-2-execute-transfer) to ensure your balance covers the total `amountTransfer` plus any applicable bank administrative fees.
+2. **Internal Dashboard Sync:** Retrieve your real-time balance to display on your internal back-office or ERP system, allowing your finance team to monitor funds without needing to log in to the Duitku Dashboard.
+
+---
+
+## Check Balance Request
+
+To check your current disbursement balance, you only need to send your basic merchant credentials.
+
+**Endpoints:**
+- `Sandbox` : POST `https://sandbox.duitku.com/webapi/api/disbursement/checkbalancesandbox`
+- `Production` : POST `https://passport.duitku.com/webapi/api/disbursement/checkbalance`
+
+### Signature Generation
+To authorize the request, you must include a `signature` parameter. Generate this by hashing the following concatenated string using **SHA256**:
+
+> `email` + `timestamp` + `secretKey`
+
+:::tip
+Always ensure you are using the correct `secretKey` specifically provided for the Disbursement feature.
+:::
+
+**[🔗 View full Check Balance parameters and code examples in the API Reference ➔](/api-reference/check-balance)**

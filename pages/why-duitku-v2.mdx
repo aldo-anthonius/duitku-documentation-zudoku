@@ -1,0 +1,60 @@
+---
+title: "Why Duitku Disbursement V2?"
+description: "Discover the power of Smart Auto-Routing and seamless payouts with Duitku Disbursement V2."
+---
+
+# Next-Generation Payouts with Duitku V2
+
+Send money to thousands of accounts across Indonesia in seconds. Duitku Disbursement V2 is designed to simplify your payout operations, maximize success rates, and reduce integration time. 
+
+Whether you are paying vendors, disbursing loans, or processing payrolls, our V2 API handles the heavy lifting so you can focus on scaling your business.
+
+---
+
+## 🌟 The Game Changer: Smart Auto-Routing
+
+In traditional disbursement systems, merchants are often forced to manually define the transfer method for each transaction (e.g., choosing between BI-Fast, SKN, RTGS, or RTOL based on the amount or bank availability). **This requires complex logic and constant maintenance on your backend.**
+
+**With Duitku Disbursement V2, manual selection is a thing of the past.**
+
+Our proprietary **Smart Auto-Routing Engine** automatically analyzes your transfer request and intelligently selects the fastest, most cost-effective, and most reliable transfer method available at that exact millisecond. 
+
+### How it benefits you:
+1. **Zero Routing Logic:** Send the destination account and the amount. We do the rest.
+2. **Cost Optimization:** The engine prioritizes the most efficient route (like BI-Fast) whenever possible.
+3. **High Availability (Auto-Fallback):** If one banking network experiences downtime, our system automatically routes your transaction through an alternative network to ensure the funds arrive successfully.
+
+---
+
+## 🚀 Key Benefits
+
+### 1. High Success Rate with Smart Auto-Retry
+Bank networks can sometimes be unstable or experience temporary timeouts. With Duitku V2, a connection blip doesn't mean a failed transfer. Our backend utilizes an advanced **Asynchronous Background Engine**. If a transaction encounters a temporary network issue at the destination bank, our system automatically and safely retries the request in the background. This guarantees maximum success rates without requiring manual intervention from your team.
+
+### 2. Lightning-Fast API Responses (Asynchronous Processing)
+Stop waiting for bank servers to respond. Because Duitku V2 processes transfers via a high-performance background queue, your API calls will receive an immediate acknowledgment (Processing Status). This prevents your application from experiencing timeout errors and keeps your user experience lightning fast. We will hit your Webhook the millisecond the funds are settled.
+
+### 3. Simplified Payload (Zero Routing Logic)
+We have drastically reduced the complexity of our API. You no longer need to map out transfer methods (BI-Fast, RTGS, RTOL), limit thresholds, or write complex fallback scripts. Just send the destination bank code, account number, and amount. Our Smart Routing API absorbs the complexity so your codebase stays completely clean.
+### 4. Massive Coverage
+Disburse funds to over 100+ banks and major e-wallets across Indonesia through a single API connection.
+
+---
+
+## ⚙️ How It Works (Simplified Flow)
+
+It only takes a simple flow to move your money:
+
+1. **Inquiry (Account Validation):** You send the destination account number. We validate the account name in real-time to prevent misdirected transfers.
+2. **Execute Transfer:** You trigger the transfer. **Our Smart Engine picks the best route automatically.**
+3. **Get Notified:** We send a real-time Webhook to your system once the money successfully hits the receiver's account.
+
+---
+
+## Ready to build?
+
+Stop worrying about bank downtimes and routing logic. Let Duitku handle the complexity.
+
+* [Read the Transaction Flow ➔](/transferonline#transaction-flow)
+* [View the API Reference ➔](/api-reference)
+* [Understand Authentication ➔](/authentication)

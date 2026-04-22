@@ -2,10 +2,37 @@
 title: "Check Status"
 ---
 
-The status inquiry is used to check in the Duitku system whether a transaction was successful or failed.
+The **Check Status API** allows you to retrieve the current real-time state of a specific disbursement transaction in the Duitku system. 
+
+While Duitku will proactively send a [Callback](/callback) to your system once a transaction is finalized (Success/Failed), this API serves as an important fallback mechanism for your integration.
+
+## When to Use Check Status?
+
+You don't need to call this API for every transaction. We highly recommend using this API only for specific scenarios:
+
+1. **Timeout Recovery:** If your system experiences a connection timeout while hitting the Transfer API, use this Check Status API to verify if Duitku actually received the request before you decide to retry.
+2. **Reconciliation:** Run a scheduled background job (e.g., every 15 or 30 minutes) to check the status of transactions that are still marked as "Pending" in your database.
+3. **Manual Verification:** Triggered by an admin in your dashboard when a customer complains about a delayed transfer.
+
+:::warning{title="Best Practice: Avoid Aggressive Polling"}
+Please avoid aggressive polling (e.g., hitting this API every second for the same transaction). Rely primarily on the **Callback** mechanism for real-time updates.
+:::
+
+---
 
 ## Check Status Request
 
-### Request Parameters
+To check the status of a transaction, you will need the `disburseId` that you received from the previous Inquiry or Transfer response.
 
-### Response Parameters
+**Endpoints:**
+- `Sandbox` : POST `https://sandbox.duitku.com/webapi/api/disbursement/checkstatussandbox`
+- `Production` : POST `https://passport.duitku.com/webapi/api/disbursement/checkstatus`
+
+### Signature Generation
+To authorize the request, you must include a `signature` parameter. Generate this by hashing the following concatenated string using **SHA256**:
+
+> `email` + `timestamp` + `disburseId` + `secretKey`
+
+*(Note: The `secretKey` is the same key you used during the Transfer Online process).*
+
+**[🔗 View full Check Status Request parameters and code examples in the API Reference ➔](/api-reference/check-status)**
