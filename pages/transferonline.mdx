@@ -24,23 +24,17 @@ Always initiate the disbursement process by performing an Inquiry. This step ver
 - `Sandbox` : POST `https://sandbox.duitku.com/webapi/api/disbursement/inquirysandbox`
 - `Production` : POST `https://passport.duitku.com/webapi/api/disbursement/inquiry`
 
-### Inquiry Signature Generation
-To authorize the request, you must include a `signature` parameter. Generate this by hashing the following concatenated string using **SHA256**:
+### Authorization (SNAP Symmetric)
+To authorize the request, you must include the standard SNAP BI headers, including the `X-SIGNATURE`. 
 
-> `email` + `timestamp` + `bankCode` + `bankAccount` + `amountTransfer` + `purpose` + `secretKey`
+Since this is a transactional endpoint, the signature must be generated using the **Symmetric Signature (HMAC_SHA512)** method.
 
-:::tip{title="Where do I get the secretKey?"}
-The `secretKey` is equivalent to the **ApiKey** used during the disbursement process. 
-You will receive this key directly via email from the Duitku team once you have successfully applied for and activated the disbursement feature for your merchant account.<br /><br />
+👉 **[Read the full Symmetric Signature guide and formula here ➔](/authentication#symmetric)**
 
-Don't have a Duitku account yet? **[Register here](https://dashboard.duitku.com/Account/Register)** to get started.
-:::
-
-:::info
-**Important formatting notes:**
-- **E-Wallets:** The `bankAccount` value must use the customer’s registered phone number in a standard format, such as: +62XXXXXXXXX, 62XXXXXXXXX, and 08XXXXXXXXX. 
-- We strongly recommend using the `08XXXXXXXXX` format to minimize input errors (over `+62` or `62`).
-- **Amount:** The `amountTransfer` must be a whole integer without decimals (e.g., `50000`).
+:::info{title="Important formatting notes:"}
+- **E-Wallets:** The `BeneficiaryAccountNo` value must use the customer’s registered phone number in a standard format, such as: +62XXXXXXXXX, 62XXXXXXXXX, and 08XXXXXXXXX. 
+- We strongly recommend using the `08XXXXXXXXX` format to minimize input errors.
+- **Amount:** The `Value` inside the `Amount` object must be a string with 2 decimal digits (e.g., `"50000.00"`).
 :::
 
 **[🔗 View full Inquiry Request parameters and code examples in the API Reference ➔](/api-reference/transfer-online#inquiry-request)**
@@ -49,21 +43,17 @@ Don't have a Duitku account yet? **[Register here](https://dashboard.duitku.com/
 
 ## Step 2: Execute Transfer
 
-Once the Inquiry returns a successful response, you will receive a `disburseId`. You must use this ID to trigger the actual fund transfer.
+Once the Inquiry returns a successful response, you must execute the transfer. You must use the exact same `PartnerReferenceNo` that you used in the Inquiry request to trigger the actual fund transfer.
 
 **Endpoints:**
 - `Sandbox` : POST `https://sandbox.duitku.com/webapi/api/disbursement/transfersandbox`
 - `Production` : POST `https://passport.duitku.com/webapi/api/disbursement/transfer`
 
-### Transfer Signature Generation
-The signature formula for the transfer execution requires more parameters from your inquiry response. Hash the following concatenated string using **SHA256**:
+### Authorization (SNAP Symmetric)
+Similar to the Inquiry process, the Transfer execution also requires standard SNAP BI headers and a signature generated using the **Symmetric Signature (HMAC_SHA512)** method.
 
-> `email` + `timestamp` + `bankCode` + `bankAccount` + `accountName` + `custRefNumber` + `amountTransfer` + `purpose` + `disburseId` + `secretKey`
+👉 **[Read the full Symmetric Signature guide and formula here ➔](/authentication#symmetric)**
 
-:::danger{title="Note"}
-If you receive a response code **TO**, **68**, or **-100**, it indicates a critical issue or timeout during the bank processing. 
-**DO NOT retry the transfer process programmatically**, as it may result in double deductions. Please contact us via Live Chat or email at support@duitku.com to verify the transaction status.
-:::
 
 **[🔗 View full Transfer Request parameters and code examples in the API Reference ➔](/api-reference/transfer-online#transfer-request)**
 
@@ -77,7 +67,7 @@ Want to test our APIs immediately? We provide a ready-to-use Postman Collection 
   🚀 Download Postman Collection
 </a>
 
-*(After downloading the JSON file, simply open your Postman app and click **Import** to start using it).
+*(After downloading the JSON file, simply open your Postman app and click **Import** to start using it).*
 
 ## Next Steps
 After the transfer is executed, you should wait for the **Callback / Webhook** from Duitku to get the final status of the transaction (Success or Failed).

@@ -1,0 +1,95 @@
+---
+title: "Error Handling"
+---
+
+Errors In Executing the Transfer
+After a transfer request is successfully accepted (returning HTTP 200 or 202), it may still fail during our banking partner's processing or be rejected by the recipient bank.
+
+It is critically important that you understand these failure codes to decide the appropriate action to take, especially regarding Retries.
+
+Execution & Bank Errors
+Below is a comprehensive list of the possible failure codes you may receive via Callback or the Check Status API, along with our suggested actions:
+
+## Status Code
+
+In the SNAP BI standard, a Response Code is typically a combination of the HTTP Code, Service Code (API service identifier), and Status Code.
+
+Below is the complete and standardized list of response codes you might encounter across all Duitku Disbursement endpoints:
+
+| HTTP Code | Status Code | Description |
+| :--- | :--- | :--- |
+| 200 | 00 | Successful |
+| 202 | 00 | Request In Progress |
+| 400 | 00 | Bad Request |
+| 400 | 01 | Invalid Field Format |
+| 400 | 02 | Invalid Mandatory Field Format |
+| 401 | 00 | Unauthorized |
+| 401 | 01 | Invalid Token B2B |
+| 401 | 02 | Invalid Customer Token |
+| 401 | 03 | Token Not Found |
+| 401 | 04 | Customer Token Not Found |
+| 403 | 00 | Transaction Expired |
+| 403 | 01 | Feature Not Allowed |
+| 403 | 02 | Exceed Transaction Amount Limit |
+| 403 | 03 | Suspected Fraud |
+| 403 | 04 | Activity Count Limit Exceeded |
+| 403 | 05 | Do Not Honor |
+| 403 | 06 | Feature Not Allowed At This Time |
+| 403 | 07 | Card Blocked |
+| 403 | 08 | Card Expired |
+| 403 | 09 | Dormant Account |
+| 403 | 10 | Need To Set Token Limit |
+| 403 | 11 | OTP Blocked |
+| 403 | 12 | OTP Lifetime Expired |
+| 403 | 13 | OTP Sent To Cardholder |
+| 403 | 14 | Insufficient Funds |
+| 403 | 15 | Transaction Not Permitted |
+| 403 | 16 | Suspend Transaction |
+| 403 | 17 | Token Limit Exceeded |
+| 403 | 18 | Inactive Card/Account/Customer |
+| 403 | 19 | Merchant Blacklisted |
+| 403 | 20 | Merchant Limit Exceeded |
+| 403 | 21 | Set Limit Not Allowed |
+| 403 | 22 | Token Limit Invalid |
+| 403 | 23 | Account Limit Exceed |
+| 404 | 00 | Invalid Transaction Status |
+| 404 | 01 | Transaction Not Found |
+| 404 | 02 | Invalid Routing |
+| 404 | 03 | Bank Not Supported By Switch |
+| 404 | 04 | Transaction Cancelled |
+| 404 | 05 | Merchant Is Not Registered For Card Registration Service |
+| 404 | 06 | Need To Request OTP |
+| 404 | 07 | Journey Not Found |
+| 404 | 08 | Invalid Merchant |
+| 404 | 09 | No Issuer |
+| 404 | 10 | Invalid API Transition |
+| 404 | 11 | Invalid Card/Account/Customer/VA |
+| 404 | 12 | Invalid Bill/VA (Blocked/Suspended) |
+| 404 | 13 | Invalid Amount |
+| 404 | 14 | Paid Bill |
+| 404 | 15 | Invalid OTP |
+| 404 | 16 | Partner Not Found |
+| 404 | 17 | Invalid Terminal |
+| 404 | 18 | Inconsistent Request |
+| 404 | 19 | Invalid Bill/VA (Expired) |
+| 405 | 00 | Requested Function Is Not Supported |
+| 405 | 01 | Requested Operation Is Not Allowed |
+| 409 | 00 | Conflict |
+| 409 | 01 | Duplicate partnerReferenceNo |
+| 429 | 00 | Too Many Requests |
+| 500 | 00 | General Error |
+| 500 | 01 | Internal Server Error |
+| 500 | 02 | External Server Error |
+| 504 | 00 | Timeout |
+
+:::tip{title="Best Practice for Retries"}
+As a golden rule, never build an automatic retry mechanism for timeouts or general errors. Only retry a transaction automatically if the error explicitly states that the request was invalid or you had insufficient balance.
+:::
+
+## Callback Status Code
+
+| Status Code | Description |
+| :--- | :--- |
+| 00 | Success. |
+| 01 | Failed. |
+| 68 | Pending (Do not retry). |

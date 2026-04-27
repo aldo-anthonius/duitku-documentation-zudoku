@@ -18,31 +18,33 @@ Duitku will send a response in the form of an HTTP POST return value. The mercha
 
 ## Parameters
 
-Callback is only available for H2H (Host-to-Host) integration type.
+The Callback payload follows the SNAP BI standard format.
 
 - **Method:** `HTTP POST`
-- **Type:** `application/json`
+- **Content-Type:** `application/json`
 
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| **disburseId** | String(255) | Disbursement ID from Duitku, obtained after a successful inquiry process. |
-| **userId** | int | Merchant ID, obtained after the disbursement feature is activated by Duitku. |
-| **email** | String(255) | Merchant email used for Duitku registration. |
-| **bankCode** | String(255) | Destination bank code. List of bank codes can be found [here](/listbank). |
-| **bankAccount** | String(255) | Destination bank account number. |
-| **amountTransfer** | int | Nominal transaction amount. Without decimal points (.) and without decimal digits. |
-| **accountName** | String(255) | Destination account holder name. |
-| **custRefNumber** | String(255) | Customer reference number. |
-| **statusCode** | String(255) | Status code `00` = Success. Detail and description of response codes can be found [here](/responsecode). |
-| **statusDesc** | String(255) | Description of the status code. |
-| **errorMessage** | String(255) | Error description if the status is *Failed* or *Pending*. |
-| **signature** | String(255) | Formula: `SHA256(email + bankCode + bankAccount + accountName + custRefNumber + amountTransfer + disburseId + secretKey)`. |
+| Parameter | Type | Mandatory | Description |
+| :--- | :--- | :--- | :--- |
+| **OriginalPartnerReferenceNo** | String(64) | Optional | Original transaction identifier on the service consumer system. |
+| **OriginalReferenceNo** | String(64) | Optional | Original transaction identifier on the service provider system (Duitku). |
+| **OriginalExternalId** | String(19) | Optional | Original Customer Reference Number. |
+| **LatestTransactionStatus** | String(2) | Mandatory | Transfer Status Code:<br/>`00` - Success<br/>`01` - Initiated<br/>`02` - Paying<br/>`03` - Pending<br/>`04` - Refunded<br/>`05` - Canceled<br/>`06` - Failed<br/>`07` - Not found |
+| **Amount** | Object | Optional | Object value providing amount information. |
+| **Amount.Value** | String | Mandatory | Net amount of the transaction. For IDR, the value includes 2 decimal digits (e.g., IDR 10.000 will be formatted as `10000.00`). |
+| **Amount.Currency** | String(3) | Mandatory | Currency code as in ISO 4217 (e.g., `IDR`). |
+| **BeneficiaryAccountName** | String(100) | Mandatory | The beneficiary account name. |
+| **BeneficiaryAccountNo** | String(34) | Mandatory | The beneficiary account number. |
+| **BeneficiaryBankCode** | String(11) | Mandatory | The beneficiary bank code. |
+| **SourceAccountNo** | String(19) | Mandatory | Your source account number used for the transaction. |
+| **TransactionDate** | String(25) | Mandatory | Transaction date in ISO 8601 format (e.g., `YYYY-MM-DDThh:mm:ss+07:00`). |
+| **AdditionalInfo** | Object | Optional | Additional information for custom use that is not provided by SNAP. |
 
 <br/>
-:::info
-Note:
-- If the callback response is not HTTP status 200, we will resend the notification (maximum 5 times).
-- For transaction callbacks with status code **68**, please wait until H+1 (next working day) to obtain the final transaction status.
-- For updates on the transaction status, you can do so by calling the [API Inquiry Status](/checkstatus).
-- Please contact us on Live Chat or email at support@duitku.com if there are further questions.
+
+:::info{title="Callback Notes (Masih belum tau)"}
+- **Security:** Ensure you validate the incoming callback using the **SNAP Symmetric Signature** (`X-SIGNATURE`) provided in the request headers to verify it originated from Duitku.
+- **Retry Mechanism:** If your server does not respond with an HTTP status `200 OK`, we will resend the notification (maximum 5 times).
+- **Pending Status:** For transaction callbacks with status codes like `02` (Paying) or `03` (Pending), please wait or periodically check until H+1 (next working day) to obtain the final transaction status.
+- **Manual Verification:** You can actively pull updates on the transaction status by calling the **[Check Status API](/check-status)**.
+- Please contact us via Live Chat or email at support@duitku.com if you have further questions.
 :::

@@ -95,9 +95,10 @@ export const customCss = `
     display: none !important;
   }
 
-  /* Menargetkan menu Transfer Online dan Response Code di Sidebar */
+  /* Menargetkan menu Transfer Online, Response Code, dan SNAP Regis & Auth di Sidebar */
   a[href$="/transferonline"],
-  a[href$="/responsecode"] {
+  a[href$="/responsecode"],
+  a[href$="/authentication"] {
       font-weight: 700 !important; /* Membuat teks jadi Bold */
       font-size: 1.05rem !important; /* Memperbesar sedikit ukuran teks (standar biasanya 0.875rem atau 1rem) */
   }

@@ -101,6 +101,7 @@ const config: ZudokuConfig = {
       items: [
         "/introduction",
         "/why-duitku-v2",
+        "/signaturetester",
         {
           type: "category",
           label: "SNAP Registration & Auth",
@@ -125,10 +126,10 @@ const config: ZudokuConfig = {
         "/callback", 
         {
           type: "category",
-          label: "Response Code",
-          link: { type: "doc", file: "/responsecode" },
+          label: "Error Handling",
+          link: { type: "doc", file: "/errorhandling" },
           items:[
-            { type: "link", label: "Callback Status Code", to: "/responsecode#callback-status-code" },
+            { type: "link", label: "Callback Status Code", to: "/errorhandling#callback-status-code" },
           ],
         },
         "/sandboxtesting", 

@@ -2,6 +2,8 @@
 title: "SNAP Registration & Authentication"
 ---
 
+import SignatureTester from '../src/SignatureTester';
+
 To use the standardized API by SNAP, merchants need to obtain approval from ASPI in the form of a recommendation letter. To receive this letter, merchants must conduct a developer site test and functionality test.
 
 ## SNAP Registration at Duitku
@@ -142,5 +144,5 @@ Compose a variable `stringToSign`.
 Hash `stringToSign` using `SHA256withRSA` cryptographic and your secret key (the current other name is the API key). Then, encode with Base 64.
 
 Put the value to `X-SIGNATURE`.
-
+<SignatureTester />
 ---
