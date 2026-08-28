@@ -45,6 +45,6 @@ The Callback payload follows the SNAP BI standard format.
 - **Security:** Ensure you validate the incoming callback using the **SNAP Symmetric Signature** (`X-SIGNATURE`) provided in the request headers to verify it originated from Duitku.
 - **Retry Mechanism:** If your server does not respond with an HTTP status `200 OK`, we will resend the notification (maximum 5 times).
 - **Pending Status:** For transaction callbacks with status codes like `02` (Paying) or `03` (Pending), please wait or periodically check until H+1 (next working day) to obtain the final transaction status.
-- **Manual Verification:** You can actively pull updates on the transaction status by calling the **[Check Status API](/check-status)**.
+- **Manual Verification:** You can actively pull updates on the transaction status by calling the **[Check Status API](/api-reference/check-status#check-status)**.
 - Please contact us via Live Chat or email at support@duitku.com if you have further questions.
 :::

@@ -1,43 +1,43 @@
 ---
-title: Introduction
+title: "Introduction"
 ---
 
-Welcome to the Duitku Disbursement API page.  
-This API can only be used if the disbursement feature has been activated for your account.  
-On this page, Duitku provides several features, including:
+Welcome to the Duitku Disbursement V2 API! 
 
-## Online Transfer
+Our newly upgraded Disbursement (Send Money) API enables you to automate outgoing payments directly from your application with unprecedented ease. Whether you are paying vendors, distributing employee payrolls, or processing customer refunds, our single integration connects you to thousands of banks, e-wallets, and retail channels across Indonesia.
 
-The Online Transfer process is a feature that helps merchants transfer funds automatically via the API or Duitku Dashboard.  
-It is already connected to more than 140 banks in Indonesia.  
-This service is available 24/7 and can be performed in real time.  
-Transfers are limited from IDR 50 up to IDR 100 million per transaction, depending on the recipient’s bank account.
+:::info{title="Prerequisite"}
+This API can only be utilized if the Disbursement feature has been officially activated for your Duitku Merchant Account. If you haven't enabled it yet, please contact our support team to get started.
+:::
 
-## Clearing
+---
 
-The Clearing process is a feature that helps merchants perform fund clearing automatically via the API or Duitku Dashboard based on the available integration types.
+## What's New in V2: Smart Routing
 
-There are four types of clearing integrations:
+In previous versions, merchants had to manually determine the payment type (e.g., RTOL, LLG, RTGS, or BI-FAST) for every transaction. 
 
-1. **LLG (Lalu Lintas Giro)**  
-   LLG transfer is an interbank transfer covering more than 130 banks in Indonesia.  
-   The maximum transaction amount is IDR 1,000,000,000.  
-   The transfer process follows Bank Indonesia (BI) schedules, which are from 08:00 to 15:00 on business days.
+**With Disbursement V2, manual routing is a thing of the past.** Our intelligent core engine now automatically determines the most efficient, fastest, and cost-effective transfer route behind the scenes. You simply tell us **who** to send the money to and **how much**, and Duitku handles the rest automatically based on the recipient's bank, transaction amount, and real-time network availability.
 
-2. **RTGS (Real-Time Gross Settlement)**  
-   RTGS transfer is an interbank transfer covering more than 130 banks in Indonesia.  
-   The minimum transaction amount is IDR 100,000,000.  
-   The transfer process follows Bank Indonesia (BI) schedules, which are from 08:00 to 15:00 on business days.
+---
 
-3. **H2H (Bank Host to Host)**  
-   Duitku Host-to-Host connection to banks ensures direct connectivity and better reliability.  
-   Currently, it supports 6 major banks in Indonesia (BCA, BNI, BRI, Mandiri, Permata, CIMB).  
-   Transfer schedules follow each respective bank’s schedule.
+## Supported Capabilities
 
-4. **BI-FAST (Bank Indonesia Fast Payment)**  
-   A national retail payment system that facilitates real-time retail payments that are secure, efficient, affordable, and available 24/7.
+With a single unified API, you can seamlessly disburse funds across multiple channels:
 
-## Cash Out
+### 1. Interbank Transfers
+Connect and send funds to over 140 banks across Indonesia.
+* **Instant Processing:** Standard transfers are processed in real-time (24/7) using networks like BI-FAST or direct Host-to-Host (H2H) connections.
+* **High-Value Payouts:** For exceptionally large corporate transactions that exceed real-time limits (e.g., above IDR 1,000,000,000), our system will automatically route the transaction through secure clearing networks (LLG/RTGS) during Bank Indonesia's business hours.
 
-The Cash Out process is a feature that helps merchants withdraw funds automatically via the API or Duitku Dashboard.  
-Currently, it is only supported by 2 channels: POS Indonesia and Indomaret.
+### 2. E-Wallet Top-Ups
+Instantly disburse funds to major e-wallets in Indonesia. Simply use the recipient's registered mobile phone number as the destination account. Available 24/7.
+
+### 3. Cash Out (Over-The-Counter)
+Perfect for reaching the unbanked population. This feature allows your customers or partners to claim physical cash directly at our partnered physical counters.
+* **Supported Channels:** POS Indonesia and Indomaret.
+* **Best for:** Cash refunds, offline user payouts, and cash remittances.
+
+---
+
+## Ready to Start?
+Explore our integration guides on the left sidebar to start building, or jump straight to the **[Authentication Guide](/security)** to learn how to securely connect to our V2 API using the new SNAP BI security standards.

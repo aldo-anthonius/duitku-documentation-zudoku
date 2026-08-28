@@ -2,21 +2,21 @@ import React, { useState } from 'react';
 import forge from 'node-forge';
 
 export default function SignatureTester() {
-    // state untuk menyimpan nilai dari input
   const [clientKey, setClientKey] = useState('');
   const [timestamp, setTimestamp] = useState('');
   const [privateKey, setPrivateKey] = useState('');
+  
   const [signature, setSignature] = useState('');
+  const [debugString, setDebugString] = useState('');
   const [error, setError] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false); // <-- Tambahan state untuk animasi loading
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const handleGenerate = () => {
-    // Reset state dan nyalakan efek loading
     setError('');
     setSignature('');
+    setDebugString('');
     setIsGenerating(true);
 
-    // Beri jeda sangat sedikit (50ms) agar UI sempat merender status kosong/loading
     setTimeout(() => {
       try {
         if (!clientKey || !timestamp || !privateKey) {
@@ -26,6 +26,8 @@ export default function SignatureTester() {
         }
 
         const stringToSign = `${clientKey}|${timestamp}`;
+        setDebugString(stringToSign);
+
         let privateKeyObj;
         const pkString = privateKey.trim();
         
@@ -52,7 +54,7 @@ export default function SignatureTester() {
             b64ToBigInt(getXmlValue('DQ')),
             b64ToBigInt(getXmlValue('InverseQ'))
           );
-          // format BEGIN PRIVATE KEY (pem)
+        // format BEGIN PRIVATE KEY (pem)
         } else {
           privateKeyObj = forge.pki.privateKeyFromPem(pkString);
         }
@@ -68,81 +70,91 @@ export default function SignatureTester() {
         console.error(err);
         setError('Gagal generate signature. Pastikan format Private Key sudah benar (PEM atau XML).');
       } finally {
-        // Matikan efek loading setelah selesai
         setIsGenerating(false); 
       }
-    }, 50); // Jeda 50ms
+    }, 50);
   };
 
   return (
-    <div style={{ border: '1px solid #475569', borderRadius: '8px', padding: '20px', marginTop: '20px', marginBottom: '20px', backgroundColor: '#0f172a' }}>
-      <h3 style={{ marginTop: '0', color: '#f8fafc' }}>🛠️ Asymmetric Signature Tester</h3>
+    <div className="border border-slate-300 dark:border-slate-700 rounded-lg p-6 my-6 bg-slate-50 dark:bg-slate-900 shadow-sm transition-colors duration-200">
+      <h3 className="mt-0 text-slate-800 dark:text-slate-100 font-bold text-xl mb-4">🛠️ Asymmetric Signature Tester</h3>
       
-      <div style={{ backgroundColor: '#7f1d1d', color: '#fca5a5', padding: '12px', borderRadius: '6px', marginBottom: '20px', fontSize: '14px' }}>
+      <div className="bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300 p-3.5 rounded-md mb-6 text-sm border border-red-200 dark:border-red-800/50">
         <strong>⚠️ SECURITY WARNING:</strong><br/>
         Please <strong>DO NOT</strong> use your Production Private Key here. This tool is strictly for testing purposes using your <strong>Sandbox Private Key</strong>. 
       </div>
 
-      <div style={{ marginBottom: '15px' }}>
-        <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#cbd5e1' }}>X-CLIENT-KEY</label>
+      <div className="mb-4">
+        <label className="block mb-1.5 font-semibold text-slate-700 dark:text-slate-300 text-sm">X-CLIENT-KEY</label>
         <input 
           type="text" 
           value={clientKey}
           onChange={(e) => setClientKey(e.target.value)}
           placeholder="e.g. DBXXXX"
-          style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #334155', backgroundColor: '#1e293b', color: 'white' }}
+          className="w-full p-2.5 rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
         />
       </div>
 
-      <div style={{ marginBottom: '15px' }}>
-        <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#cbd5e1' }}>X-TIMESTAMP</label>
+      <div className="mb-4">
+        <label className="block mb-1.5 font-semibold text-slate-700 dark:text-slate-300 text-sm">X-TIMESTAMP</label>
         <input 
           type="text" 
           value={timestamp}
           onChange={(e) => setTimestamp(e.target.value)}
           placeholder="e.g. 2022-09-16T13:00:00+07:00"
-          style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #334155', backgroundColor: '#1e293b', color: 'white' }}
+          className="w-full p-2.5 rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
         />
       </div>
 
-        <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#cbd5e1' }}>Private Key (Supports PEM or XML)</label>
-            <textarea 
-            value={privateKey}
-            onChange={(e) => setPrivateKey(e.target.value)}
-            placeholder="Paste your Private Key here...&#10;It accepts both -----BEGIN PRIVATE KEY----- format AND <RSAKeyValue> format."
-            rows={6}
-            style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #334155', backgroundColor: '#1e293b', color: 'white', fontFamily: 'monospace' }}
-            />
-        </div>
+      <div className="mb-6">
+        <label className="block mb-1.5 font-semibold text-slate-700 dark:text-slate-300 text-sm">Private Key (Supports PEM or XML)</label>
+        <textarea 
+          value={privateKey}
+          onChange={(e) => setPrivateKey(e.target.value)}
+          placeholder="Paste your Private Key here...&#10;It accepts both -----BEGIN PRIVATE KEY----- format AND <RSAKeyValue> format."
+          rows={6}
+          className="w-full p-2.5 rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-mono text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+        />
+      </div>
 
       <button 
-        type="button" // <-- Memastikan ini tidak memicu submit event
+        type="button" 
         onClick={handleGenerate}
-        disabled={isGenerating} // <-- Tombol mati sebentar saat loading
-        style={{ 
-          backgroundColor: isGenerating ? '#475569' : '#2563eb', 
-          color: 'white', 
-          padding: '10px 20px', 
-          border: 'none', 
-          borderRadius: '4px', 
-          cursor: isGenerating ? 'not-allowed' : 'pointer', 
-          fontWeight: 'bold' 
-        }}
+        disabled={isGenerating} 
+        className={`w-full py-3 px-4 rounded-md font-bold text-white transition-all duration-200 ${
+          isGenerating 
+            ? 'bg-slate-400 dark:bg-slate-600 cursor-not-allowed' 
+            : 'bg-blue-600 hover:bg-blue-700 shadow-sm hover:shadow active:scale-[0.99]'
+        }`}
       >
         {isGenerating ? 'Generating...' : 'Generate X-SIGNATURE'}
       </button>
 
       {error && (
-        <div style={{ color: '#ef4444', marginTop: '15px', fontWeight: 'bold' }}>
+        <div className="text-red-600 dark:text-red-400 mt-4 font-bold bg-red-50 dark:bg-red-900/20 p-3 rounded-md border border-red-200 dark:border-red-800/30">
           ❌ {error}
         </div>
       )}
 
       {signature && !isGenerating && (
-        <div style={{ marginTop: '20px', padding: '15px', backgroundColor: '#064e3b', border: '1px solid #059669', borderRadius: '6px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#a7f3d0' }}>✅ Generated Signature (Base64):</label>
-          <code style={{ wordBreak: 'break-all', color: 'white' }}>{signature}</code>
+        <div className="mt-6 flex flex-col gap-4">
+          
+          {/* Debug StringToSign */}
+          <div className="p-4 bg-slate-100 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-md">
+            <label className="block mb-2 font-bold text-slate-700 dark:text-slate-300 text-sm">🔍 String to Sign (Before RSA):</label>
+            <code className="block break-all text-slate-600 dark:text-slate-400 text-sm font-mono bg-white dark:bg-slate-900 p-2.5 rounded border border-slate-200 dark:border-slate-700">
+              {debugString}
+            </code>
+          </div>
+
+          {/* Final Signature */}
+          <div className="p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-300 dark:border-emerald-700/50 rounded-md">
+            <label className="block mb-2 font-bold text-emerald-800 dark:text-emerald-400 text-sm">✅ Generated Signature (Base64):</label>
+            <code className="block break-all text-emerald-900 dark:text-emerald-100 text-sm font-mono font-semibold bg-white dark:bg-emerald-950/50 p-2.5 rounded border border-emerald-200 dark:border-emerald-800/50">
+              {signature}
+            </code>
+          </div>
+
         </div>
       )}
     </div>

@@ -101,14 +101,14 @@ const config: ZudokuConfig = {
       items: [
         "/introduction",
         "/why-duitku-v2",
-        "/signaturetester",
+        "/snapregistration",
         {
           type: "category",
-          label: "SNAP Registration & Auth",
-          link: "/authentication",
+          label: "Security",
+          link: "/security",
           items: [
-            { type: "link", label: "Public and Private Key", to: "/authentication#public-key-and-private-key" },
-            { type: "link", label: "Signature", to: "/authentication#signature" },
+            { type: "link", label: "Public and Private Key", to: "/security#public-key-and-private-key" },
+            { type: "link", label: "Signature", to: "/security#signature" },
           ],
         },
         {
@@ -129,7 +129,8 @@ const config: ZudokuConfig = {
           label: "Error Handling",
           link: { type: "doc", file: "/errorhandling" },
           items:[
-            { type: "link", label: "Callback Status Code", to: "/errorhandling#callback-status-code" },
+            { type: "link", label: "Status Code", to: "/errorhandling#status-code"},
+            { type: "link", label: "Callback Status Code", to: "/errorhandling#callback-status-code" }, 
           ],
         },
         "/sandboxtesting", 

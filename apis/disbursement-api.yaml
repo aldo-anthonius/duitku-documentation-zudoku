@@ -4,10 +4,16 @@ info:
   version: 1.0.0
   description: API Documentation for Duitku Disbursement feature.
 servers:
-  - url: https://da7f045c-5294-4f50-865d-4f08695b7b2e.mock.pstmn.io
-    description: Postman Mock Server (Testing)
+  # - url: https://da7f045c-5294-4f50-865d-4f08695b7b2e.mock.pstmn.io
+  #   description: Postman Mock Server (Testing)
   - url: https://sandbox.duitku.com/webapi/api/disbursement
     description: Sandbox Server
+  - url: http://localhost:5002/snap
+    description: Local Development Server
+  - url: http://localhost:3001
+    description: testing local proxy
+  - url: https://snapdev.duitku.com
+    description: testing snap sandbox
 
 # 1. SNAP AUTHORIZATION AND HEADERS
 components:
@@ -22,11 +28,6 @@ security:
 
 paths:
   /access-token/b2b:
-    # servers:
-    #   - url: https://snapdev.duitku.com/auth/v1.0
-    #     description: Development Server
-    #   - url: https://snap.duitku.com/auth/v1.0
-    #     description: Production Server
     post:
       summary: 🔑 Get Access Token (B2B)
       security: [] # Mematikan global Bearer Token khusus untuk endpoint ini
@@ -36,7 +37,7 @@ paths:
         <div class="alert-box">
           <div class="alert-title">⚠️ Authentication Info</div>
           <div class="alert-content">
-            To use a Bearer Token with the SNAP API, you need to obtain the token by providing your credentials to this authentication endpoint. <strong>This endpoint uses the <a href="/authentication#asymmetric">Asymmetric</a> Signature formula.</strong>
+            To use a Bearer Token with the SNAP API, you need to obtain the token by providing your credentials to this authentication endpoint. <strong>This endpoint uses the <a href="/security#asymmetric">Asymmetric</a> Signature formula.</strong>
           </div>
         </div>
       tags:
@@ -64,7 +65,7 @@ paths:
             type: string
             default: "xJhJTz9ddsPRds..."
           description: |
-            Non-Repudiation & Integrity checking X-Signature with [Asymmetric](/authentication#asymmetric) algorithm. Formula: <br/>
+            Non-Repudiation & Integrity checking X-Signature with [Asymmetric](/security#asymmetric) algorithm. Formula: <br/>
             <code>stringToSign = ClientKey + "|" + Timestamp</code> <br/>
             <code>SHA256withRSA(Private_Key, stringToSign)</code>
         - in: header
@@ -94,9 +95,6 @@ paths:
                   description: "The value is 'client_credentials'"
                   example: "client_credentials"
 
-      # ==========================================
-      # RESPONSES GET TOKEN (SNAP STANDARD)
-      # ==========================================
       responses:
         "200":
           description: "Successful processing and obtaining the accessToken"
@@ -141,20 +139,20 @@ paths:
                 responseCode: "4017300"
                 responseMessage: "Invalid Client Key or Signature"
 
-  /inquirysandbox:
+  /db/snap/v1.0/account-inquiry-external:
     post:
-      summary: 🔍 Inquiry Request
+      summary: "🔍 Inquiry Request (External)"
       description: |
         <div class="auth-box">
           <div class="auth-title">SNAP Authorization Headers</div>
           <div class="auth-content">
-            This API uses SNAP BI standard headers. Ensure you provide the Bearer Token in the authorization configuration, and calculate the <strong>X-SIGNATURE</strong> carefully using the <a href="/authentication#symmetric">symmetric</a> formula:<br/><br/>
+            This API uses SNAP BI standard headers. Ensure you provide the Bearer Token in the authorization configuration, and calculate the <strong>X-SIGNATURE</strong> carefully using the <a href="/security#symmetric">symmetric</a> formula:<br/><br/>
             <code>stringToSign = HttpMethod + ":" + Endpoint + ":" + AccessToken + ":" + LowerCase(HexEncode(SHA-256(Minify(RequestBody)))) + ":" + Timestamp</code><br/><br/>
             <code>signature = Base64(HMAC_SHA512(stringToSign, secretKey))</code>
           </div>
         </div>
 
-        The first step in the disbursement process begins with making an inquiry to the Duitku system.
+        This API is used to perform account inquiries for transfers using interbank methods such as RTOL, BI-FAST, RTGS, and SKN.
         
         <div class="alert-box">
           <div class="alert-title">⚠️ Important Notes</div>
@@ -166,7 +164,7 @@ paths:
           </div>
         </div>
       tags:
-        - Transfer Online
+        - Inquiry API
       
       parameters:
         - in: header
@@ -190,7 +188,7 @@ paths:
           schema:
             type: string
             example: "xJhJTz9ddsPRds..."
-          description: "Refer to symmetric signature formula."
+          description: "Refer to [symmetric](/security#symmetric) signature formula."
         - in: header
           name: X-PARTNER-ID
           required: true
@@ -221,89 +219,70 @@ paths:
               inquiry done:
                 summary: "Skenario Sukses"
                 value:
-                  BeneficiaryAccountNo: "8760673566"
-                  PartnerReferenceNo: "767366172360427800000"
-                  BeneficiaryBankCode: "014"
-                  AdditionalInfo:
-                    DeviceId: "1234567890"
-                    Channel: "api"
-                    Remark: "Test Inquiry"
-                    Amount:
-                      Value: "10000.00"
-                      Currency: "IDR"
-                    CustomerReference: "Testing-1"
+                  beneficiaryAccountNo: "8760673566"
+                  beneficiaryBankCode: "014"
+                  partnerReferenceNo: "767366172360427800000"
+                  additionalInfo:
+                    billType: "INTERBANK"
+                    amount:
+                      value: "10000.00"
+                      currency: "IDR"
+                    customerReference: "Testing-1"
             schema:
               type: object
               required:
-                - BeneficiaryAccountNo
-                - PartnerReferenceNo
-                - BeneficiaryBankCode
-                - AdditionalInfo
+                - beneficiaryAccountNo
+                - beneficiaryBankCode
+                - partnerReferenceNo
+                - additionalInfo
               properties:
-                BeneficiaryAccountNo:
+                beneficiaryAccountNo:
                   type: string
                   maxLength: 34
                   description: "The beneficiary account number for transfer."
                   example: "8760673566"
-                PartnerReferenceNo:
+                beneficiaryBankCode:
+                  type: string
+                  maxLength: 8
+                  description: "The beneficiary account bank code for transfer."
+                  example: "014"
+                partnerReferenceNo:
                   type: string
                   maxLength: 25
                   description: "A unique transaction ID. 1 ID for 1 inquiry. Will be use for trigger transfer."
                   example: "767366172360427800000"
-                BeneficiaryBankCode:
-                  type: string
-                  description: |
-                    The beneficiary account bank code for transfer. You can only enter bank codes that are connected to the H2H network with Duitku.
-                    * BCA - 014
-                    * BNI - 009
-                    * BRI - 002
-                    * Mandiri - 008
-                    * Permata - 013
-                    * CIMB Niaga - 022
-                  example: "014"
-                AdditionalInfo:
+                additionalInfo:
                   type: object
                   description: "Object value for additional information that need to be provide."
                   required:
-                    - Amount
+                    - amount
                   properties:
-                    DeviceId:
+                    billType:
                       type: string
-                      description: "Device ID of the request origin."
-                      example: "1234567890"
-                    Channel:
-                      type: string
-                      description: "Channel of the transaction."
-                      example: "api"
-                    Remark:
-                      type: string
-                      description: "Remark is an information that attach to the transaction."
-                      example: "Test Inquiry"
-                    Amount:
+                      description: "Transfer type method. Options: INTERBANK, BIFAST, RTGS, SKN"
+                      example: "INTERBANK"
+                    amount:
                       type: object
                       description: "Object value that provide amount information."
                       required:
-                        - Value
-                        - Currency
+                        - value
+                        - currency
                       properties:
-                        Value:
+                        value:
                           type: string
                           description: "Numerical string of amount following with 2 digits decimals"
                           example: "10000.00"
-                        Currency:
+                        currency:
                           type: string
                           maxLength: 3
                           description: "Currency code as in ISO4217 for Indonesian Rupiah. It should be as IDR."
                           example: "IDR"
-                    CustomerReference:
+                    customerReference:
                       type: string
                       maxLength: 20
-                      description: "Merchant customer reference. Could be use as transaction flag owner. Duitku will return it on the response. Duitku will generate random value if the parameter is not provided or empty."
+                      description: "Merchant customer reference. Could be use as transaction flag owner."
                       example: "Testing-1"
 
-      # ==========================================
-      # RESPONSES INQUIRY (SNAP STANDARD)
-      # ==========================================
       responses:
         "200":
           description: "Successful Request"
@@ -312,79 +291,180 @@ paths:
               schema:
                 type: object
                 properties:
-                  ResponseCode:
+                  responseCode:
                     type: string
                     maxLength: 7
-                    description: "Response Code will return status code of request result."
                     example: "2001600"
-                  ResponseMessage:
+                  responseMessage:
                     type: string
-                    description: "Response Message will return description of request result."
                     example: "Successful"
-                  ReferenceNo:
+                  referenceNo:
                     type: string
                     maxLength: 25
-                    description: "Duitku unique generated ID for transaction."
                     example: "599780"
-                  PartnerReferenceNo:
+                  partnerReferenceNo:
                     type: string
                     maxLength: 25
-                    description: "A unique transaction ID. 1 ID for 1 inquiry. Will be use for trigger transfer."
                     example: "767366172360427800000"
-                  BeneficiaryAccountName:
+                  beneficiaryAccountName:
                     type: string
                     maxLength: 100
-                    description: "The beneficiary account name from the account that has been inquired."
                     example: "Testing Account"
-                  BeneficiaryAccountNo:
+                  beneficiaryAccountNo:
                     type: string
                     maxLength: 34
-                    description: "The beneficiary account number from the account that has been inquired."
                     example: "8760673566"
-                  BeneficiaryBankCode:
+                  beneficiaryBankCode:
                     type: string
                     maxLength: 8
-                    description: "The beneficiary bank code from the account that has been inquired."
                     example: "014"
-                  BeneficiaryBankName:
+                  beneficiaryBankName:
                     type: string
                     maxLength: 50
-                    description: "The beneficiary bank name from the account that has been inquired."
                     example: "BANK CENTRAL ASIA"
-                  AdditionalInfo:
-                    type: object
-                    description: "Object value for additional information that provided by Duitku."
-                    properties:
-                      DeviceId:
-                        type: string
-                        description: "Device ID of the request origin."
-                        example: "1234567890"
-                      Channel:
-                        type: string
-                        description: "Channel of the transaction."
-                        example: "api"
-                      Remark:
-                        type: string
-                        description: "Remark is an information that attach to the transaction."
-                        example: "Test Inquiry"
-                      Amount:
-                        type: object
-                        description: "Object value that provide amount information."
-                        properties:
-                          Value:
-                            type: string
-                            description: "Numerical string of amount following with 2 digits decimals"
-                            example: "10000.00"
-                          Currency:
-                            type: string
-                            description: "Currency code as in ISO4217 for Indonesian Rupiah. It should be as IDR."
-                            example: "IDR"
-                      CustomerReference:
-                        type: string
-                        maxLength: 25
-                        description: "Merchant customer reference. Could be use as transaction flag owner."
-                        example: "Testing-1"
-                        
+
+  /db/snap/v1.0/account-inquiry-internal:
+    post:
+      summary: "🔍 Inquiry Request (Internal)"
+      description: |
+        <div class="auth-box">
+          <div class="auth-title">SNAP Authorization Headers</div>
+          <div class="auth-content">
+            This API uses SNAP BI standard headers. Ensure you provide the Bearer Token in the authorization configuration, and calculate the <strong>X-SIGNATURE</strong> carefully using the <a href="/security#symmetric">symmetric</a> formula:<br/><br/>
+            <code>stringToSign = HttpMethod + ":" + Endpoint + ":" + AccessToken + ":" + LowerCase(HexEncode(SHA-256(Minify(RequestBody)))) + ":" + Timestamp</code><br/><br/>
+            <code>signature = Base64(HMAC_SHA512(stringToSign, secretKey))</code>
+          </div>
+        </div>
+
+        This API is used to perform inquiries for intrabank transfer methods. Duitku supports intrabank transfers for banks connected to the H2H network.
+      tags:
+        - Inquiry API
+      
+      parameters:
+        - in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+            default: "application/json"
+          description: "String represents indicate the media type of the resource."
+        - in: header
+          name: X-TIMESTAMP
+          required: true
+          schema:
+            type: string
+            example: "2022-09-16T13:00:00+07:00"
+            default: "2022-09-16T13:00:00+07:00"
+          description: "ISO-8601 formatted timestamp."
+        - in: header
+          name: X-SIGNATURE
+          required: true
+          schema:
+            type: string
+            example: "xJhJTz9ddsPRds..."
+          description: "Refer to [symmetric](/security#symmetric) signature formula."
+        - in: header
+          name: X-PARTNER-ID
+          required: true
+          schema:
+            type: string
+            example: "DBXXXX"
+          description: "Partner ID for disbursement given by Duitku team."
+        - in: header
+          name: X-EXTERNAL-ID
+          required: true
+          schema:
+            type: string
+            example: "REQ-123456789"
+          description: "Unique request ID. Need to be unique in every request."
+        - in: header
+          name: CHANNEL-ID
+          required: true
+          schema:
+            type: string
+            example: "95221"
+          description: "Value should be 95221."
+          
+      requestBody:
+        required: true
+        content:
+          application/json:
+            examples:
+              snap inquiry:
+                summary: "Skenario Sukses Internal"
+                value:
+                  beneficiaryAccountNo: "8760673566"
+                  partnerReferenceNo: "767366172360427800000"
+                  additionalInfo:
+                    customerReference: "Testing-1"
+                    beneficiaryBankCode: "014"
+                    amount:
+                      value: "10000.00"
+                      currency: "IDR"
+            schema:
+              type: object
+              required:
+                - beneficiaryAccountNo
+                - partnerReferenceNo
+                - additionalInfo
+              properties:
+                beneficiaryAccountNo:
+                  type: string
+                  maxLength: 34
+                  description: "The beneficiary account number for transfer."
+                  example: "8760673566"
+                partnerReferenceNo:
+                  type: string
+                  maxLength: 25
+                  description: "A unique transaction ID."
+                  example: "767366172360427800000"
+                additionalInfo:
+                  type: object
+                  description: "Object value for additional information."
+                  required:
+                    - beneficiaryBankCode
+                    - amount
+                  properties:
+                    customerReference:
+                      type: string
+                      maxLength: 20
+                      description: "Merchant customer reference."
+                      example: "Testing-1"
+                    beneficiaryBankCode:
+                      type: string
+                      maxLength: 8
+                      description: "The beneficiary account bank code for transfer."
+                      example: "014"
+                    amount:
+                      type: object
+                      required:
+                        - value
+                        - currency
+                      properties:
+                        value:
+                          type: string
+                          description: "Numerical string of amount following with 2 digits decimals."
+                          example: "10000.00"
+                        currency:
+                          type: string
+                          maxLength: 3
+                          description: "Currency code as in ISO4217 (IDR)."
+                          example: "IDR"
+      responses:
+        "200":
+          description: "Successful response"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  responseCode:
+                    type: string
+                    example: "2001600"
+                  responseMessage:
+                    type: string
+                    example: "Successful"
+
   /transfersandbox:
     post:
       summary: 💸 Transfer Request
@@ -392,7 +472,7 @@ paths:
         <div class="auth-box">
           <div class="auth-title">SNAP Authorization Headers</div>
           <div class="auth-content">
-            This API uses SNAP BI standard headers. Ensure you provide the Bearer Token in the authorization configuration, and calculate the <strong>X-SIGNATURE</strong> carefully using the <a href="/authentication#symmetric">symmetric</a> formula:<br/><br/>
+            This API uses SNAP BI standard headers. Ensure you provide the Bearer Token in the authorization configuration, and calculate the <strong>X-SIGNATURE</strong> carefully using the <a href="/security#symmetric">symmetric</a> formula:<br/><br/>
             <code>stringToSign = HttpMethod + ":" + Endpoint + ":" + AccessToken + ":" + LowerCase(HexEncode(SHA-256(Minify(RequestBody)))) + ":" + Timestamp</code><br/><br/>
             <code>signature = Base64(HMAC_SHA512(stringToSign, secretKey))</code>
           </div>
@@ -410,7 +490,7 @@ paths:
           </div>
         </div>
       tags:
-        - Transfer Online
+        - Transfer API
       
       parameters:
         - in: header
@@ -433,7 +513,7 @@ paths:
           schema:
             type: string
             example: "xJhJTz9ddsPRds..."
-          description: "Refer to symmetric signature formula."
+          description: "Refer to [symmetric](/security#symmetric) signature formula."
         - in: header
           name: X-PARTNER-ID
           required: true
@@ -589,9 +669,6 @@ paths:
                       description: "Merchant customer reference. Could be use as transaction flag owner."
                       example: "Testing-1"
 
-      # ==========================================
-      # RESPONSES TRANSFER (SNAP STANDARD)
-      # ==========================================
       responses:
         "200":
           description: "Successful Transfer"
@@ -603,105 +680,11 @@ paths:
                   ResponseCode:
                     type: string
                     maxLength: 7
-                    description: "Response Code will return status code of request result."
                     example: "2001700"
                   ResponseMessage:
                     type: string
-                    description: "Response Message will return description of request result."
                     example: "Successful"
-                  ReferenceNo:
-                    type: string
-                    maxLength: 25
-                    description: "Duitku unique generated ID for transaction."
-                    example: "618392"
-                  PartnerReferenceNo:
-                    type: string
-                    maxLength: 25
-                    description: "A unique transaction ID. 1 ID for 1 inquiry. Will be use for trigger transfer."
-                    example: "417185632380714400000"
-                  BeneficiaryAccountName:
-                    type: string
-                    maxLength: 100
-                    description: "The beneficiary account name."
-                    example: "Testing Account"
-                  BeneficiaryAccountNo:
-                    type: string
-                    maxLength: 34
-                    description: "The beneficiary account number."
-                    example: "8760673566"
-                  BeneficiaryAddress:
-                    type: string
-                    description: "The address of the beneficiary."
-                    example: "Jl. Sudirman No 1, Jakarta"
-                  BeneficiaryBankCode:
-                    type: string
-                    maxLength: 8
-                    description: "The beneficiary bank code."
-                    example: "014"
-                  BeneficiaryBankName:
-                    type: string
-                    maxLength: 50
-                    description: "The beneficiary bank name."
-                    example: "BANK CENTRAL ASIA"
-                  BeneficiaryEmail:
-                    type: string
-                    description: "The email address of the beneficiary."
-                    example: "test@example.com"
-                  TransactionDate:
-                    type: string
-                    description: "Date transaction use format ISO 8601."
-                    example: "2024-08-08T11:15:38+07:00"
-                  Amount:
-                    type: object
-                    description: "Object value that provide amount information."
-                    properties:
-                      Value:
-                        type: string
-                        description: "Numerical string of amount following with 2 digits decimals."
-                        example: "10000.00"
-                      Currency:
-                        type: string
-                        maxLength: 3
-                        description: "Currency code as in ISO4217 for Indonesian Rupiah. It should be as IDR."
-                        example: "IDR"
-                  AdditionalInfo:
-                    type: object
-                    description: "Object value for additional information that provided by Duitku."
-                    properties:
-                      DeviceId:
-                        type: string
-                        description: "Device ID of the request origin."
-                        example: "1234567890"
-                      Channel:
-                        type: string
-                        description: "Channel of the transaction."
-                        example: "api"
-                      Remark:
-                        type: string
-                        description: "Remark is an information that attach to the transaction."
-                        example: "Test Transfer"
-                      BillType:
-                        type: string
-                        description: "Transfer type method."
-                        example: "INTERBANK"
-                      Amount:
-                        type: object
-                        description: "Object value that provide amount information."
-                        properties:
-                          Value:
-                            type: string
-                            description: "Numerical string of amount following with 2 digits decimals"
-                            example: "10000.00"
-                          Currency:
-                            type: string
-                            description: "Currency code as in ISO4217 for Indonesian Rupiah. It should be as IDR."
-                            example: "IDR"
-                      CustomerReference:
-                        type: string
-                        maxLength: 25
-                        description: "Merchant customer reference. Could be use as transaction flag owner."
-                        example: "Testing-1"
-                        
+
   /checkbalance:
     post:
       summary: 💰 Check Balance
@@ -709,7 +692,7 @@ paths:
         <div class="auth-box">
           <div class="auth-title">SNAP Authorization Headers</div>
           <div class="auth-content">
-            This API uses SNAP BI standard headers. Ensure you provide the Bearer Token in the authorization configuration, and calculate the <strong>X-SIGNATURE</strong> carefully using the symmetric formula:<br/><br/>
+            This API uses SNAP BI standard headers. Ensure you provide the Bearer Token in the authorization configuration, and calculate the <strong>X-SIGNATURE</strong> carefully using the <a href="/security#symmetric">symmetric</a> formula:<br/><br/>
             <code>stringToSign = HttpMethod + ":" + Endpoint + ":" + AccessToken + ":" + LowerCase(HexEncode(SHA-256(Minify(RequestBody)))) + ":" + Timestamp</code><br/><br/>
             <code>signature = Base64(HMAC_SHA512(stringToSign, secretKey))</code>
           </div>
@@ -740,7 +723,7 @@ paths:
           schema:
             type: string
             example: "xJhJTz9ddsPRds..."
-          description: "Refer to symmetric signature formula."
+          description: "Refer to [symmetric](/security#symmetric) signature formula."
         - in: header
           name: X-PARTNER-ID
           required: true
@@ -771,8 +754,8 @@ paths:
               check balance:
                 summary: "Check Balance"
                 value:
-                  PartnerReferenceNo: "767366172360427800000"
-                  AccountNo: "XXXXX"
+                  userId: "60468"
+                  email: "aldo@duitku.com"
             schema:
               type: object
               required:
@@ -790,58 +773,9 @@ paths:
                   description: "Your Account Number for disbursement will be provided by Duitku."
                   example: "XXXXX"
 
-      # ==========================================
-      # RESPONSES CHECK BALANCE (SNAP STANDARD)
-      # ==========================================
       responses:
         "200":
           description: "Successful Balance Inquiry"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  ResponseCode:
-                    type: string
-                    maxLength: 7
-                    description: "Response Code will return status code of request result."
-                    example: "2001100"
-                  ResponseMessage:
-                    type: string
-                    description: "Response Message will return description of request result."
-                    example: "Success"
-                  AccountInfo:
-                    type: array
-                    description: "Array Object value. Information balance of your account in Duitku."
-                    items:
-                      type: object
-                      properties:
-                        Amount:
-                          type: object
-                          description: "Object value. Your balance Information."
-                          properties:
-                            Value:
-                              type: string
-                              description: "Numerical string of amount following with 2 digits decimals."
-                              example: "10000.00"
-                            Currency:
-                              type: string
-                              maxLength: 3
-                              description: "Currency code as in ISO4217 for Indonesian Rupiah. It should be as IDR."
-                              example: "IDR"
-                        AvailableBalance:
-                          type: object
-                          description: "Object value. Your effective balance Information."
-                          properties:
-                            Value:
-                              type: string
-                              description: "Numerical string of amount following with 2 digits decimals."
-                              example: "10000.00"
-                            Currency:
-                              type: string
-                              maxLength: 3
-                              description: "Currency code as in ISO4217 for Indonesian Rupiah. It should be as IDR."
-                              example: "IDR"
 
   /checkstatus:
     post:
@@ -850,7 +784,7 @@ paths:
         <div class="auth-box">
           <div class="auth-title">SNAP Authorization Headers</div>
           <div class="auth-content">
-            This API uses SNAP BI standard headers. Ensure you provide the Bearer Token in the authorization configuration, and calculate the <strong>X-SIGNATURE</strong> carefully using the symmetric formula:<br/><br/>
+            This API uses SNAP BI standard headers. Ensure you provide the Bearer Token in the authorization configuration, and calculate the <strong>X-SIGNATURE</strong> carefully using the <a href="/security#symmetric">symmetric</a> formula:<br/><br/>
             <code>stringToSign = HttpMethod + ":" + Endpoint + ":" + AccessToken + ":" + LowerCase(HexEncode(SHA-256(Minify(RequestBody)))) + ":" + Timestamp</code><br/><br/>
             <code>signature = Base64(HMAC_SHA512(stringToSign, secretKey))</code>
           </div>
@@ -888,7 +822,7 @@ paths:
           schema:
             type: string
             example: "xJhJTz9ddsPRds..."
-          description: "Refer to symmetric signature formula."
+          description: "Refer to [symmetric](/security#symmetric) signature formula."
         - in: header
           name: X-PARTNER-ID
           required: true
@@ -953,201 +887,7 @@ paths:
                   maxLength: 25
                   description: "Duitku unique generated ID transaction. The related ID is required if OriginalPartnerReferenceNo is empty."
                   example: "602169"
-                OriginalExternalId:
-                  type: string
-                  description: "The original external ID used in the transaction request."
-                  example: "REQ-123456789"
-                ServiceCode:
-                  type: string
-                  maxLength: 2
-                  description: |
-                    The related API service code that transaction has been transfered.
-                    * 17 - Intrabank
-                    * 18 - BI-FAST, Interbank
-                    * 22 - RTGS
-                    * 23 - SKN
-                  example: "18"
-                TransactionDate:
-                  type: string
-                  description: "Date transaction use format ISO 8601."
-                  example: "2024-08-08T11:15:38+07:00"
-                Amount:
-                  type: object
-                  description: "Object value that provide amount information."
-                  required:
-                    - Value
-                    - Currency
-                  properties:
-                    Value:
-                      type: string
-                      description: "Numerical string of amount following with 2 digits decimals."
-                      example: "10000.00"
-                    Currency:
-                      type: string
-                      maxLength: 3
-                      description: "Currency code as in ISO4217 for Indonesian Rupiah. It should be as IDR."
-                      example: "IDR"
-                AdditionalInfo:
-                  type: object
-                  description: "Object value for additional information that need to be provide."
-                  properties:
-                    DeviceId:
-                      type: string
-                      description: "Device ID of the request origin."
-                      example: "1234567890"
-                    Channel:
-                      type: string
-                      description: "Channel of the transaction."
-                      example: "api"
-                    Remark:
-                      type: string
-                      maxLength: 100
-                      description: "Remark is an information that attach to the transaction."
-                      example: "Check Status"
-                    Amount:
-                      type: object
-                      description: "Object value that provide amount information."
-                      properties:
-                        Value:
-                          type: string
-                          description: "Numerical string of amount following with 2 digits decimals"
-                          example: "10000.00"
-                        Currency:
-                          type: string
-                          description: "Currency code as in ISO4217 for Indonesian Rupiah. It should be as IDR."
-                          example: "IDR"
-                    CustomerReference:
-                      type: string
-                      maxLength: 25
-                      description: "Merchant customer reference. Could be use as transaction flag owner."
-                      example: "Testing-1"
 
-      # ==========================================
-      # RESPONSES CHECK STATUS (SNAP STANDARD)
-      # ==========================================
       responses:
         "200":
           description: "Successful Status Retrieval"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  ResponseCode:
-                    type: string
-                    maxLength: 7
-                    description: "Response Code will return status code of request result."
-                    example: "2003600"
-                  ResponseMessage:
-                    type: string
-                    description: "Response Message will return description of request result."
-                    example: "Successful"
-                  OriginalReferenceNo:
-                    type: string
-                    maxLength: 25
-                    description: "Duitku unique generated ID transaction."
-                    example: "602412"
-                  OriginalPartnerReferenceNo:
-                    type: string
-                    maxLength: 25
-                    description: "A unique transaction ID. In line with the API service code used by the transaction."
-                    example: "810690490886716300000"
-                  OriginalExternalId:
-                    type: string
-                    description: "The original external ID used in the transaction request."
-                    example: "REQ-123456789"
-                  ServiceCode:
-                    type: string
-                    maxLength: 2
-                    description: "Transfer Service Code."
-                    example: "18"
-                  TransactionDate:
-                    type: string
-                    description: "Date transaction use format ISO 8601."
-                    example: "2024-08-08T11:15:38+07:00"
-                  BeneficiaryAccountNo:
-                    type: string
-                    maxLength: 34
-                    description: "The beneficiary account number from the account that has been inquired."
-                    example: "8760673566"
-                  BeneficiaryBankCode:
-                    type: string
-                    description: "The beneficiary bank code."
-                    example: "014"
-                  PreviousResponseCode:
-                    type: string
-                    description: "The previous response code of the transaction."
-                    example: "2001700"
-                  ReferenceNumber:
-                    type: string
-                    description: "Bank reference number for the transaction."
-                    example: "123456789012"
-                  SourceAccountNo:
-                    type: string
-                    maxLength: 19
-                    description: "Your Account Number that has been use for the transaction transfer disbursement."
-                    example: "XXXXX"
-                  TransactionId:
-                    type: string
-                    description: "Transaction ID from the core system."
-                    example: "TXN-001"
-                  LatestTransactionStatus:
-                    type: string
-                    maxLength: 3
-                    description: |
-                      Transfer Status Code.
-                      * 00 - Success
-                      * 02 - Paying
-                      * 04 - Refunded
-                      * 06 - Failed
-                    example: "00"
-                  TransactionStatusDesc:
-                    type: string
-                    description: "Transaction Status Description."
-                    example: "Success"
-                  Amount:
-                    type: object
-                    description: "Object value that provide amount information."
-                    properties:
-                      Value:
-                        type: string
-                        description: "Numerical string of amount following with 2 digits decimals."
-                        example: "10000.00"
-                      Currency:
-                        type: string
-                        maxLength: 3
-                        description: "Currency code as in ISO4217 for Indonesian Rupiah. It should be as IDR."
-                        example: "IDR"
-                  AdditionalInfo:
-                    type: object
-                    description: "Object value for additional information that provided by Duitku."
-                    properties:
-                      DeviceId:
-                        type: string
-                        description: "Device ID of the request origin."
-                        example: "1234567890"
-                      Channel:
-                        type: string
-                        description: "Channel of the transaction."
-                        example: "api"
-                      Remark:
-                        type: string
-                        description: "Remark is an information that attach to the transaction."
-                        example: "Check Status"
-                      Amount:
-                        type: object
-                        description: "Object value that provide amount information."
-                        properties:
-                          Value:
-                            type: string
-                            description: "Numerical string of amount following with 2 digits decimals"
-                            example: "10000.00"
-                          Currency:
-                            type: string
-                            description: "Currency code as in ISO4217 for Indonesian Rupiah. It should be as IDR."
-                            example: "IDR"
-                      CustomerReference:
-                        type: string
-                        maxLength: 25
-                        description: "Merchant customer reference. Could be use as transaction flag owner."
-                        example: "Testing-1"
