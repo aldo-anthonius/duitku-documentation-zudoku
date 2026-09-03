@@ -147,7 +147,7 @@ paths:
 
   /db/snap/v1.0/account-inquiry-internal:
     post:
-      summary: "🔍 Inquiry Request (Internal)"
+      summary: "🔍 Inquiry Request"
       description: |
         <div class="auth-box">
           <div class="auth-title">SNAP Authorization Headers</div>
