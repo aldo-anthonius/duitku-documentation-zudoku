@@ -95,11 +95,25 @@ export const customCss = `
     display: none !important;
   }
 
-  /* Menargetkan menu Transfer Online, Response Code, dan SNAP Regis & Auth di Sidebar */
-  a[href$="/transferonline"],
+  /* Menargetkan menu Disbursement Flow, Response Code, dan SNAP Regis & Auth di Sidebar */
+  a[href$="/disbursementflow"],
   a[href$="/responsecode"],
   a[href$="/security"] {
       font-weight: 700 !important; /* Membuat teks jadi Bold */
       font-size: 1.05rem !important; /* Memperbesar sedikit ukuran teks (standar biasanya 0.875rem atau 1rem) */
+  }
+  /* Menyembunyikan tombol Play di panel code block Zudoku */
+  button:has(svg.lucide-play) {
+    display: none !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+  /* Memperlebar panel code snippet di kanan menjadi 50:50 dengan panel teks di layar PC */
+  @media (min-width: 1024px) {
+      [class*="lg:grid-cols-[minmax(0,4fr)_minmax(0,3fr)]"] {
+          grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+      }
   }
 `;
