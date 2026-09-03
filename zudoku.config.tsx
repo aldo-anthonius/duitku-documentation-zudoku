@@ -113,12 +113,12 @@ const config: ZudokuConfig = {
         },
         {
           type: "category",
-          label: "Transfer Online",
-          link: "/transferonline",
+          label: "Disbursement Flow",
+          link: "/disbursementflow",
           items: [
-            { type: "link", label: "Transfer Online Transaction Flow", to: "/transferonline#transaction-flow" },
-            { type: "link", label: "Step 1: Inquiry", to: "/transferonline#step-1-validate-account-inquiry" },
-            { type: "link", label: "Step 2: Transfer", to: "/transferonline#step-2-execute-transfer" },
+            { type: "link", label: "Disbursement Transaction Flow", to: "/disbursementflow#transaction-flow" },
+            { type: "link", label: "Step 1: Inquiry", to: "/disbursementflow#step-1-validate-account-inquiry" },
+            { type: "link", label: "Step 2: Transfer", to: "/disbursementflow#step-2-execute-transfer" },
           ],
         },
         "/checkstatus", 
