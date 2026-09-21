@@ -145,7 +145,7 @@ paths:
                 responseCode: "4017300"
                 responseMessage: "Invalid Client Key or Signature"
 
-  /db/snap/v1.0/account-inquiry-internal:
+  /v1.0/account-inquiry-external:
     post:
       summary: "🔍 Inquiry Request"
       description: |
@@ -218,8 +218,8 @@ paths:
                   beneficiaryAccountNo: "8760673566"
                   partnerReferenceNo: "767366172360427800000"
                   additionalInfo:
-                    customerReference: "Testing-1"
-                    beneficiaryBankCode: "014"
+                    deviceId: "12345679237"
+                    channel: "mobilephone"
                     amount:
                       value: "10000.00"
                       currency: "IDR"
@@ -244,19 +244,22 @@ paths:
                   type: object
                   description: "Object value for additional information."
                   required:
-                    - beneficiaryBankCode
                     - amount
                   properties:
-                    customerReference:
+                    deviceId:
                       type: string
                       maxLength: 20
-                      description: "Merchant customer reference."
-                      example: "Testing-1"
-                    beneficiaryBankCode:
+                      description: "Device ID of the request origin."
+                      example: "12345679237"
+                    channel:
                       type: string
                       maxLength: 8
-                      description: "The beneficiary account bank code for transfer."
+                      description: "Channel of the transaction"
                       example: "014"
+                    remark:
+                      type: string
+                      maxLength: 50 
+                      description: "Information that attach to the transaction"
                     amount:
                       type: object
                       required:
@@ -279,15 +282,89 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - responseCode
+                  - responseMessage
+                  - beneficiaryAccountName
+                  - beneficiaryAccountNo
                 properties:
                   responseCode:
                     type: string
+                    maxLength: 7
+                    description: "Response code"
                     example: "2001600"
                   responseMessage:
                     type: string
+                    maxLength: 150
+                    description: "Response description"
                     example: "Successful"
+                  referenceNo:
+                    type: string
+                    maxLength: 64
+                    description: "Transaction identifier on service provider system"
+                    example: "602169"
+                  partnerReferenceNo:
+                    type: string
+                    maxLength: 64
+                    description: "Transaction identifier on service consumer system"
+                    example: "767366172360427800000"
+                  beneficiaryAccountName:
+                    type: string
+                    maxLength: 100
+                    description: "Beneficiary Account Name"
+                    example: "Testing Account"
+                  beneficiaryAccountNo:
+                    type: string
+                    maxLength: 34
+                    description: "Beneficiary Account Number"
+                    example: "8760673566"
+                  beneficiaryBankCode:
+                    type: string
+                    maxLength: 11
+                    description: "Beneficiary Bank Code"
+                    example: "014"
+                  beneficiaryBankName:
+                    type: string
+                    maxLength: 50
+                    description: "Beneficiary Bank Name"
+                    example: "BANK CENTRAL ASIA"
+                  additionalInfo:
+                    type: object
+                    description: "Object value for additional information."
+                    required:
+                      - amount
+                    properties:
+                      deviceId:
+                        type: string
+                        maxLength: 20
+                        description: "Device ID of the request origin."
+                        example: "12345679237"
+                      channel:
+                        type: string
+                        maxLength: 8
+                        description: "Channel of the transaction"
+                        example: "mobilephone"
+                      remark:
+                        type: string
+                        maxLength: 50 
+                        description: "Information that attach to the transaction"
+                      amount:
+                        type: object
+                        required:
+                          - value
+                          - currency
+                        properties:
+                          value:
+                            type: string
+                            description: "Numerical string of amount following with 2 digits decimals."
+                            example: "10000.00"
+                          currency:
+                            type: string
+                            maxLength: 3
+                            description: "Currency code as in ISO4217 (IDR)."
+                            example: "IDR"
 
-  /transfersandbox:
+  /v1.0/transfer-interbank:
     post:
       summary: 💸 Transfer Request
       description: |
@@ -366,130 +443,110 @@ paths:
               transfer success:
                 summary: "Skenario Sukses"
                 value:
-                  PartnerReferenceNo: "767366172360427800000"
-                  SourceAccountNo: "XXXXX"
-                  BeneficiaryAccountName: "Testing Account"
-                  BeneficiaryAccountNo: "8760673566"
-                  BeneficiaryAddress: "Jl. Sudirman No 1, Jakarta"
-                  BeneficiaryBankCode: "014"
-                  BeneficiaryBankName: "BANK CENTRAL ASIA"
-                  BeneficiaryEmail: "test@example.com"
-                  TransactionDate: "2024-08-08T11:15:38+07:00"
-                  Amount:
-                    Value: "10000.00"
-                    Currency: "IDR"
-                  AdditionalInfo:
-                    DeviceId: "1234567890"
-                    Channel: "api"
-                    Remark: "Test Transfer"
-                    Amount:
-                      Value: "10000.00"
-                      Currency: "IDR"
-                    CustomerReference: "Testing-1"
+                  partnerReferenceNo: "767366172360427800000"
+                  sourceAccountNo: "XXXXX"
+                  beneficiaryAccountName: "Testing Account"
+                  beneficiaryAccountNo: "8760673566"
+                  beneficiaryAddress: "Jl. Sudirman No 1, Jakarta"
+                  beneficiaryBankCode: "014"
+                  beneficiaryBankName: "BANK CENTRAL ASIA"
+                  beneficiaryEmail: "test@example.com"
+                  transactionDate: "2024-08-08T11:15:38+07:00"
+                  amount:
+                    value: "10000.00"
+                    currency: "IDR"
+                  additionalInfo:
+                    deviceId: "1234567890"
+                    channel: "mobilephone"
+                    remark: "Test Transfer"
+
             schema:
               type: object
               required:
-                - PartnerReferenceNo
-                - SourceAccountNo
-                - BeneficiaryAccountName
-                - BeneficiaryAccountNo
-                - BeneficiaryBankCode
-                - TransactionDate
-                - Amount
-                - AdditionalInfo
+                - partnerReferenceNo
+                - sourceAccountNo
+                - beneficiaryAccountName
+                - beneficiaryAccountNo
+                - beneficiaryBankCode
+                - transactionDate
+                - amount
+
               properties:
-                PartnerReferenceNo:
+                partnerReferenceNo:
                   type: string
                   maxLength: 25
                   description: "A unique transaction ID. 1 ID for 1 inquiry. Will be use for trigger transfer."
                   example: "767366172360427800000"
-                SourceAccountNo:
+                sourceAccountNo:
                   type: string
                   maxLength: 19
-                  description: "Your Account Number for disbursement will be provided by Duitku."
+                  description: "Your Account Number for disbursement."
                   example: "XXXXX"
-                BeneficiaryAccountName:
+                beneficiaryAccountName:
                   type: string
                   maxLength: 100
                   description: "The beneficiary account name."
                   example: "Testing Account"
-                BeneficiaryAccountNo:
+                beneficiaryAccountNo:
                   type: string
                   maxLength: 34
                   description: "The beneficiary account number for transfer."
                   example: "8760673566"
-                BeneficiaryAddress:
+                beneficiaryAddress:
                   type: string
                   description: "The address of the beneficiary."
                   example: "Jl. Sudirman No 1, Jakarta"
-                BeneficiaryBankCode:
+                beneficiaryBankCode:
                   type: string
                   maxLength: 8
                   description: "The beneficiary account bank code for transfer."
                   example: "014"
-                BeneficiaryBankName:
+                beneficiaryBankName:
                   type: string
                   maxLength: 50
                   description: "The beneficiary bank name."
                   example: "BANK CENTRAL ASIA"
-                BeneficiaryEmail:
+                beneficiaryEmail:
                   type: string
                   description: "The email address of the beneficiary."
                   example: "test@example.com"
-                TransactionDate:
+                transactionDate:
                   type: string
                   description: "Date transaction use format ISO 8601."
                   example: "2024-08-08T11:15:38+07:00"
-                Amount:
+                amount:
                   type: object
                   description: "Object value that provide amount information."
                   required:
-                    - Value
-                    - Currency
+                    - value
+                    - currency
                   properties:
-                    Value:
+                    value:
                       type: string
                       description: "Numerical string of amount following with 2 digits decimals."
                       example: "10000.00"
-                    Currency:
+                    currency:
                       type: string
                       maxLength: 3
                       description: "Currency code as in ISO4217 for Indonesian Rupiah. It should be as IDR."
                       example: "IDR"
-                AdditionalInfo:
+                additionalInfo:
                   type: object
                   description: "Object value for additional information that need to be provide."
                   properties:
-                    DeviceId:
+                    deviceId:
                       type: string
                       description: "Device ID of the request origin."
                       example: "1234567890"
-                    Channel:
+                    channel:
                       type: string
                       description: "Channel of the transaction."
-                      example: "api"
-                    Remark:
+                      example: "mobilephone"
+                    remark:
                       type: string
                       maxLength: 100
                       description: "Remark is an information that attach to the transaction."
                       example: "Test Transfer"
-                    Amount:
-                      type: object
-                      description: "Object value that provide amount information."
-                      properties:
-                        Value:
-                          type: string
-                          description: "Numerical string of amount following with 2 digits decimals"
-                          example: "10000.00"
-                        Currency:
-                          type: string
-                          description: "Currency code as in ISO4217 for Indonesian Rupiah. It should be as IDR."
-                          example: "IDR"
-                    CustomerReference:
-                      type: string
-                      maxLength: 25
-                      description: "Merchant customer reference. Could be use as transaction flag owner."
-                      example: "Testing-1"
 
       responses:
         "200":
@@ -498,16 +555,80 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - responseCode
+                  - responseMessage
+                  - beneficiaryAccountNo
                 properties:
-                  ResponseCode:
+                  responseCode:
                     type: string
                     maxLength: 7
+                    description: "Response code"
                     example: "2001700"
-                  ResponseMessage:
+                  responseMessage:
                     type: string
+                    maxLength: 150
+                    description: "Response description"
                     example: "Successful"
+                  referenceNo:
+                    type: string
+                    maxLength: 64
+                    description: "Transaction identifier on service provider system. Must be filled upon successful transaction"
+                    example: "602169"
+                  partnerReferenceNo:
+                    type: string
+                    maxLength: 64
+                    description: "Transaction identifier on service consumer system"
+                    example: "767366172360427800000"
+                  amount:
+                    type: object
+                    description: "Object value that provide amount information."
+                    required:
+                      - value
+                      - currency
+                    properties:
+                      value:
+                        type: string
+                        maxLength: 16
+                        description: "Net amount of the transaction. If it's IDR then value includes 2 decimal digits. e.g. IDR 10.000,- will be placed with 10000.00"
+                        example: "10000.00"
+                      currency:
+                        type: string
+                        maxLength: 3
+                        description: "Currency (ISO4217)"
+                        example: "IDR"
+                  beneficiaryAccountNo:
+                    type: string
+                    maxLength: 19
+                    description: "Beneficiary Account Number"
+                    example: "8760673566"
+                  beneficiaryBankCode:
+                    type: string
+                    maxLength: 11
+                    description: "Beneficiary Bank Code"
+                    example: "014"
+                  additionalInfo:
+                    type: object
+                    description: "Object value for additional information."
+                    required:
+                      - amount
+                    properties:
+                      deviceId:
+                        type: string
+                        maxLength: 20
+                        description: "Device ID of the request origin."
+                        example: "12345679237"
+                      channel:
+                        type: string
+                        maxLength: 8
+                        description: "Channel of the transaction"
+                        example: "mobilephone"
+                      remark:
+                        type: string
+                        maxLength: 50 
+                        description: "Information that attach to the transaction"
 
-  /checkbalance:
+  /v1.0/balance-inquiry:
     post:
       summary: 💰 Check Balance
       description: |
@@ -576,30 +697,85 @@ paths:
               check balance:
                 summary: "Check Balance"
                 value:
-                  userId: "60468"
-                  email: "aldo@duitku.com"
+                  partnerReferenceNo: "767366172360427800000"
+                  accountNo: "XXXXX"
             schema:
               type: object
               required:
-                - PartnerReferenceNo
-                - AccountNo
+                - partnerReferenceNo
+                - accountNo
               properties:
-                PartnerReferenceNo:
+                partnerReferenceNo:
                   type: string
-                  maxLength: 25
+                  maxLength: 64
                   description: "A unique transaction ID. Will be used for tracking."
                   example: "767366172360427800000"
-                AccountNo:
+                accountNo:
                   type: string
-                  maxLength: 19
-                  description: "Your Account Number for disbursement will be provided by Duitku."
+                  maxLength: 16
+                  description: "Your Account Number for disbursement."
                   example: "XXXXX"
 
       responses:
         "200":
           description: "Successful Balance Inquiry"
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - responseCode
+                  - responseMessage
+                properties:
+                  responseCode:
+                    type: string
+                    maxLength: 7
+                    description: "Response code"
+                    example: "2001100"
+                  responseMessage:
+                    type: string
+                    maxLength: 150
+                    description: "Response description"
+                    example: "Successful"
+                  accountInfos:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        amount:
+                          type: object
+                          required:
+                            - value
+                            - currency
+                          properties:
+                            value:
+                              type: string
+                              maxLength: 16
+                              description: "Net amount of the transaction. If it's IDR then value includes 2 decimal digits. e.g. IDR 10.000,- will be placed with 10000.00"
+                              example: "10000.00"
+                            currency:
+                              type: string
+                              maxLength: 3
+                              description: "Currency (ISO4217)"
+                              example: "IDR"
+                        availableBalance:
+                          type: object
+                          required:
+                            - value
+                            - currency
+                          properties:
+                            value:
+                              type: string
+                              maxLength: 16
+                              description: "Account balance that can be used for financial transaction"
+                              example: "10000.00"
+                            currency:
+                              type: string
+                              maxLength: 3
+                              description: "Currency (ISO4217)"
+                              example: "IDR"
 
-  /checkstatus:
+  /v1.0/transfer/status:
     post:
       summary: 🔎 Check Status
       description: |
@@ -675,41 +851,215 @@ paths:
               check status:
                 summary: "Check Status Request"
                 value:
-                  OriginalPartnerReferenceNo: "810690490886716300000"
-                  OriginalReferenceNo: "602169"
-                  OriginalExternalId: "REQ-123456789"
-                  ServiceCode: "18"
-                  TransactionDate: "2024-08-08T11:15:38+07:00"
-                  Amount:
-                    Value: "10000.00"
-                    Currency: "IDR"
-                  AdditionalInfo:
-                    DeviceId: "1234567890"
-                    Channel: "api"
-                    Remark: "Check Status"
-                    Amount:
-                      Value: "10000.00"
-                      Currency: "IDR"
-                    CustomerReference: "Testing-1"
+                  originalPartnerReferenceNo: "810690490886716300000"
+                  originalReferenceNo: "602169"
+                  originalExternalId: "REQ-123456789"
+                  serviceCode: "18"
+                  transactionDate: "2024-08-08T11:15:38+07:00"
+                  amount:
+                    value: "10000.00"
+                    currency: "IDR"
+                  additionalInfo:
+                    deviceId: "1234567890"
+                    channel: "mobilephone"
+                    remark: "Check Status"
+
             schema:
               type: object
               required:
-                - ServiceCode
-                - TransactionDate
-                - Amount
-                - AdditionalInfo
+                - serviceCode
+
               properties:
-                OriginalPartnerReferenceNo:
+                originalPartnerReferenceNo:
                   type: string
-                  maxLength: 25
+                  maxLength: 64
                   description: "A unique transaction ID that has been used for the transaction. The related ID is required if OriginalReferenceNo is empty."
                   example: "810690490886716300000"
-                OriginalReferenceNo:
+                originalReferenceNo:
                   type: string
-                  maxLength: 25
+                  maxLength: 64
                   description: "Duitku unique generated ID transaction. The related ID is required if OriginalPartnerReferenceNo is empty."
                   example: "602169"
+                originalExternalId:
+                  type: string
+                  maxLength: 32
+                  description: "The original external ID used in the transaction request."
+                  example: "REQ-123456789"
+                serviceCode:
+                  type: string
+                  maxLength: 2
+                  description: |
+                    The related API service code that transaction has been transfered.
+                    * 17 - Intrabank
+                    * 18 - BI-FAST, Interbank
+                    * 22 - RTGS
+                    * 23 - SKN
+                  example: "18"
+                transactionDate:
+                  type: string
+                  maxLength: 25
+                  description: "Date transaction use format ISO 8601."
+                  example: "2024-08-08T11:15:38+07:00"
+                amount:
+                  type: object
+                  description: "Object value that provide amount information."
+                  required:
+                    - value
+                    - currency
+                  properties:
+                    value:
+                      type: string
+                      maxLength: 16
+                      description: "Numerical string of amount following with 2 digits decimals."
+                      example: "10000.00"
+                    currency:
+                      type: string
+                      maxLength: 3
+                      description: "Currency code as in ISO4217 for Indonesian Rupiah. It should be as IDR."
+                      example: "IDR"
+                additionalInfo:
+                  type: object
+                  description: "Object value for additional information that need to be provide."
+                  properties:
+                    deviceId:
+                      type: string
+                      description: "Device ID of the request origin."
+                      example: "1234567890"
+                    channel:
+                      type: string
+                      description: "Channel of the transaction."
+                      example: "api"
+                    remark:
+                      type: string
+                      maxLength: 50
+                      description: "Remark is an information that attach to the transaction."
+                      example: "Check Status"
 
       responses:
         "200":
           description: "Successful Status Retrieval"
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - responseCode
+                  - responseMessage
+                  - serviceCode
+                  - beneficiaryAccountNo
+                  - referenceNumber
+                  - sourceAccountNo
+                  - latestTransactionStatus
+                properties:
+                  responseCode:
+                    type: string
+                    maxLength: 7
+                    description: "Response Code will return status code of request result."
+                    example: "2003600"
+                  responseMessage:
+                    type: string
+                    maxLength: 150
+                    description: "Response Message will return description of request result."
+                    example: "Successful"
+                  originalReferenceNo:
+                    type: string
+                    maxLength: 64
+                    description: "Duitku unique generated ID transaction."
+                    example: "602412"
+                  originalPartnerReferenceNo:
+                    type: string
+                    maxLength: 64
+                    description: "A unique transaction ID. In line with the API service code used by the transaction."
+                    example: "810690490886716300000"
+                  originalExternalId:
+                    type: string
+                    maxLength: 32
+                    description: "The original external ID used in the transaction request."
+                    example: "REQ-123456789"
+                  serviceCode:
+                    type: string
+                    maxLength: 2
+                    description: "Transfer Service Code."
+                    example: "18"
+                  transactionDate:
+                    type: string
+                    maxLength: 25
+                    description: "Date transaction use format ISO 8601."
+                    example: "2024-08-08T11:15:38+07:00"
+                  beneficiaryAccountNo:
+                    type: string
+                    maxLength: 34
+                    description: "The beneficiary account number from the account that has been inquired."
+                    example: "8760673566"
+                  beneficiaryBankCode:
+                    type: string
+                    maxLength: 11
+                    description: "The beneficiary bank code."
+                    example: "014"
+                  previousResponseCode:
+                    type: string
+                    maxLength: 7
+                    description: "The previous response code of the transaction."
+                    example: "2001700"
+                  referenceNumber:
+                    type: string
+                    maxLength: 30
+                    description: "Bank reference number for the transaction."
+                    example: "123456789012"
+                  sourceAccountNo:
+                    type: string
+                    maxLength: 19
+                    description: "Your Account Number that has been use for the transaction transfer disbursement."
+                    example: "XXXXX"
+                  transactionId:
+                    type: string
+                    maxLength: 8
+                    description: "Transaction ID from the core system."
+                    example: "TXN-001"
+                  latestTransactionStatus:
+                    type: string
+                    maxLength: 2
+                    description: |
+                      Transfer Status Code.
+                      * 00 - Success
+                      * 02 - Paying
+                      * 04 - Refunded
+                      * 06 - Failed
+                    example: "00"
+                  transactionStatusDesc:
+                    type: string
+                    maxLength: 50
+                    description: "Transaction Status Description."
+                    example: "Success"
+                  amount:
+                    type: object
+                    description: "Object value that provide amount information."
+                    required:
+                     - value
+                     - currency
+                    properties:
+                      value:
+                        type: string
+                        description: "Numerical string of amount following with 2 digits decimals."
+                        example: "10000.00"
+                      currency:
+                        type: string
+                        maxLength: 3
+                        description: "Currency code as in ISO4217 for Indonesian Rupiah. It should be as IDR."
+                        example: "IDR"
+                  additionalInfo:
+                    type: object
+                    description: "Object value for additional information that provided by Duitku."
+                    properties:
+                      deviceId:
+                        type: string
+                        description: "Device ID of the request origin."
+                        example: "1234567890"
+                      channel:
+                        type: string
+                        description: "Channel of the transaction."
+                        example: "api"
+                      remark:
+                        type: string
+                        description: "Remark is an information that attach to the transaction."
+                        example: "Check Status"
